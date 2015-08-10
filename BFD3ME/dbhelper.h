@@ -4,6 +4,8 @@
 #include <QString>
 #include <QDomDocument>
 #include <QList>
+#include <QFile>
+#include <QTextStream>
 #include <QSharedPointer>
 
 template <typename T>
@@ -36,7 +38,9 @@ QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
     f.close();
 
     QList<QSharedPointer<T>> result;
-    foreach(QDomElement &el, _doc.elementsByTagName(_tag)) {
+    QDomNodeList nodeList = _doc.elementsByTagName(_tag);
+    for (int i = 0; i < nodeList.count(); i++) {
+        QDomElement el = nodeList.at(i).toElement();
         QSharedPointer<T> k(new T(el));
         result.append(k);
     }

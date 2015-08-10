@@ -37,7 +37,6 @@ static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
     return QSharedPointer<T>(new T(node));
 }
 
-template <typename T>
 static QDomDocument loadDoc(const QString &path) {
     QDomDocument doc;
     QFile f(path);

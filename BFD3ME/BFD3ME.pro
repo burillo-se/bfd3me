@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     kitpiece.cpp \
     preset.cpp \
     util.cpp \
-    kithelper.cpp
+    helper.cpp \
+    dbhelper.cpp
 
 HEADERS  += bfd3me.h \
     kit.h \
     kitpiece.h \
     preset.h \
     util.h \
-    kithelper.h
+    helper.h \
+    dbhelper.h
 
 FORMS    += bfd3me.ui

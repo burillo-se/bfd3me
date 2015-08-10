@@ -17,9 +17,7 @@ SOURCES += main.cpp\
     kit.cpp \
     kitpiece.cpp \
     preset.cpp \
-    util.cpp \
-    helper.cpp \
-    dbhelper.cpp
+    util.cpp
 
 HEADERS  += bfd3me.h \
     kit.h \

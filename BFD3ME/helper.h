@@ -4,8 +4,13 @@
 #include<QString>
 #include <QList>
 #include <QMap>
+#include <QFile>
+#include <QDir>
+#include <QTextStream>
 #include <QSharedPointer>
 #include <QDomDocument>
+
+#include <QtDebug>
 
 template<typename T>
 class Helper
@@ -33,7 +38,7 @@ Helper<T>::Helper(const QString &tag, const QString &filter) {
 
 template <typename T>
 static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
-    QDomElement node = doc.firstChildElement(tag);
+    QDomElement node = doc.elementsByTagName(tag).at(0).toElement();
     return QSharedPointer<T>(new T(node));
 }
 
@@ -97,14 +102,15 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     filter << _filter;
     foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
         QDomDocument doc = loadDoc(fi.absoluteFilePath());
-        QSharedPointer<T> k = alloc(doc, _tag);
-        kit_info i = {doc, fi.absoluteFilePath()};
-        info_map[k] = i;
+        QSharedPointer<T> k = alloc<T>(doc, _tag);
+        data_info i = {doc, fi.absoluteFilePath()};
+        _info_map[k] = i;
         result.append(k);
     }
     // recurse into subdirectories
     foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs)) {
-        result.append(loadKits(fi.absoluteFilePath()));
+        break;
+        result.append(load(fi.absoluteFilePath()));
     }
     return result;
 }

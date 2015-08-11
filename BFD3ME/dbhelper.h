@@ -15,11 +15,13 @@ private:
     QString _tag;
     QString _path;
     QDomDocument _doc;
+    QMap<QSharedPointer<T>,QDomElement> _info_map;
 public:
     DBHelper(const QString &tag);
     QList<QSharedPointer<T>> load(const QString &path);
     void save();
     QList<QSharedPointer<T>> restoreFromBackup();
+    void remove(QSharedPointer<T> item);
 };
 
 template <typename T>
@@ -43,6 +45,7 @@ QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
         QDomElement el = nodeList.at(i).toElement();
         QSharedPointer<T> k(new T(el));
         result.append(k);
+        _info_map.insert(k, el);
     }
     return result;
 }
@@ -74,5 +77,10 @@ QList<QSharedPointer<T>> DBHelper<T>::restoreFromBackup() {
     return load(_path);
 }
 
+template <typename T>
+void DBHelper<T>::remove(QSharedPointer<T> item) {
+    QDomElement el = _info_map[item];
+    el.parentNode().removeChild(el);
+}
 
 #endif // DBHELPER_H

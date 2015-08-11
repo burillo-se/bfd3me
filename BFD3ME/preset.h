@@ -2,7 +2,7 @@
 #define PRESET_H
 
 #include <QString>
-#include <QDomNode>
+#include <QDomElement>
 
 class Preset
 {

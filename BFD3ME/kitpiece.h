@@ -2,7 +2,7 @@
 #define KITPIECE_H
 
 #include <QString>
-#include <QDomNode>
+#include <QDomElement>
 
 class Kitpiece
 {

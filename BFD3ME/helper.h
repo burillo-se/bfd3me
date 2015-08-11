@@ -132,7 +132,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
         result.append(k);
     }
     // recurse into subdirectories
-    foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs)) {
+    foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         result.append(load(fi.absoluteFilePath()));
     }
     return result;

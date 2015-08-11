@@ -6,13 +6,13 @@
  * yes, i'm a lazy person...
  */
 
-#define ITEM_PARAM(class_name, mut_fn, acc_fn, param, param_str) \
-void class_name::mut_fn(const QString &val) {\
+#define ITEM_PARAM(class_name, fn_name, param) \
+void class_name::set##fn_name(const QString &val) {\
     param = val; \
-    Util::setNodeAttr(_node, param_str, param); \
+    Util::setNodeAttr(_node, _attr##param, param); \
 } \
 \
-QString class_name::acc_fn() const {\
+QString class_name::get##fn_name() const {\
     return param;\
 }
 

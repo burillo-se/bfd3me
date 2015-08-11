@@ -6,9 +6,9 @@
  * Boring, nothing to see here.
  */
 
-static const QString _name_attr = "info_name";
-static const QString _libcode_attr = "info_library";
-static const QString _libname_attr = "info_librarylong";
+static const QString _attr_name = "info_name";
+static const QString _attr_libcode = "info_library";
+static const QString _attr_libname = "info_librarylong";
 
 /*
  * XML parsing is in the constructor. What happens if we
@@ -17,11 +17,11 @@ static const QString _libname_attr = "info_librarylong";
 Preset::Preset(QDomElement &node)
 {
     _node = node;
-    _name = node.attribute(_name_attr);
-    _libname = node.attribute(_libname_attr);
-    _libcode = node.attribute(_libcode_attr);
+    _name = node.attribute(_attr_name);
+    _libname = node.attribute(_attr_libname);
+    _libcode = node.attribute(_attr_libcode);
 }
 
-ITEM_PARAM(Preset, setName, getName, _name, _name_attr)
-ITEM_PARAM(Preset, setLibname, getLibname, _libname, _libname_attr)
-ITEM_PARAM(Preset, setLibcode, getLibcode, _libcode, _libcode_attr)
+ITEM_PARAM(Preset, Name, _name)
+ITEM_PARAM(Preset, Libname, _libname)
+ITEM_PARAM(Preset, Libcode, _libcode)

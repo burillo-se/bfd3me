@@ -7,18 +7,18 @@
  * More boilerplate code...
  */
 
-static const QString _name_attr = "info_name";
-static const QString _libcode_attr = "info_library";
-static const QString _libname_attr = "info_librarylong";
+static const QString _attr_name = "info_name";
+static const QString _attr_libcode = "info_library";
+static const QString _attr_libname = "info_librarylong";
 
 Kit::Kit(QDomElement &node)
 {
     _node = node;
-    _name = node.attribute(_name_attr);
-    _libname = node.attribute(_libname_attr);
-    _libcode = node.attribute(_libcode_attr);
+    _name = node.attribute(_attr_name);
+    _libname = node.attribute(_attr_libname);
+    _libcode = node.attribute(_attr_libcode);
 }
 
-ITEM_PARAM(Kit, setName, getName, _name, _name_attr)
-ITEM_PARAM(Kit, setLibname, getLibname, _libname, _libname_attr)
-ITEM_PARAM(Kit, setLibcode, getLibcode, _libcode, _libcode_attr)
+ITEM_PARAM(Kit, Name, _name)
+ITEM_PARAM(Kit, Libname, _libname)
+ITEM_PARAM(Kit, Libcode, _libcode)

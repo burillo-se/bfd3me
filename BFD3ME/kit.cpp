@@ -1,6 +1,8 @@
 #include "kit.h"
 #include "util.h"
 
+#include "boilerplate.h"
+
 /*
  * More boilerplate code...
  */
@@ -17,29 +19,6 @@ Kit::Kit(QDomElement &node)
     _libcode = node.attribute(_libcode_attr);
 }
 
-void Kit::setName(const QString &val) {
-    _name = val;
-    Util::setNodeAttr(_node, _name_attr, _name);
-}
-
-QString Kit::getName() const {
-    return _name;
-}
-
-void Kit::setLibname(const QString &val) {
-    _libname = val;
-    Util::setNodeAttr(_node, _libname_attr, _libname);
-}
-
-QString Kit::getLibname() const {
-    return _libname;
-}
-
-void Kit::setLibcode(const QString &val) {
-    _libcode = val;
-    Util::setNodeAttr(_node, _libcode_attr, _libcode);
-}
-
-QString Kit::getLibcode() const {
-    return _libcode;
-}
+ITEM_PARAM(Kit, setName, getName, _name, _name_attr)
+ITEM_PARAM(Kit, setLibname, getLibname, _libname, _libname_attr)
+ITEM_PARAM(Kit, setLibcode, getLibcode, _libcode, _libcode_attr)

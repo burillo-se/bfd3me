@@ -1,5 +1,6 @@
 #include "preset.h"
 #include "util.h"
+#include "boilerplate.h"
 
 /*
  * Boring, nothing to see here.
@@ -21,29 +22,6 @@ Preset::Preset(QDomElement &node)
     _libcode = node.attribute(_libcode_attr);
 }
 
-void Preset::setName(const QString &val) {
-    _name = val;
-    Util::setNodeAttr(_node, _name_attr, _name);
-}
-
-QString Preset::getName() const {
-    return _name;
-}
-
-void Preset::setLibname(const QString &val) {
-    _libname = val;
-    Util::setNodeAttr(_node, _libname_attr, _libname);
-}
-
-QString Preset::getLibname() const {
-    return _libname;
-}
-
-void Preset::setLibcode(const QString &val) {
-    _libcode = val;
-    Util::setNodeAttr(_node, _libcode_attr, _libcode);
-}
-
-QString Preset::getLibcode() const {
-    return _libcode;
-}
+ITEM_PARAM(Preset, setName, getName, _name, _name_attr)
+ITEM_PARAM(Preset, setLibname, getLibname, _libname, _libname_attr)
+ITEM_PARAM(Preset, setLibcode, getLibcode, _libcode, _libcode_attr)

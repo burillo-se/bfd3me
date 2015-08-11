@@ -1,8 +1,9 @@
 #include "kitpiece.h"
 #include "util.h"
+#include "boilerplate.h"
 
 /*
- * Mostly boring boilerplate code, but few interesting bits.
+ * Mostly boring boilerplate code, but class is a special case.
  */
 
 static const QString _name_attr = "kpi_name";
@@ -18,12 +19,17 @@ static const QString _subclass_attr = "kpi_subclass";
 
 /*
  * In a kitpiece, class node is a special case.
+ *
+ * Long story short, we need to find a VString node with "name" attribute
+ * set to "kpi_class". Because this is how item class looks like. Not sure
+ * why class wasn't made an attribute like the rest of the stuff, you'd
+ * have to ask FXpansion about that one...
  */
 static QDomElement getClassNode(QDomElement &node) {
     QDomNodeList list = node.elementsByTagName("VString");
     for (int i = 0; i < list.count(); i++) {
-        QDomNode class_node = list[i];
-        if (class_node.attribute("name") == _class_attr) {
+        QDomElement class_node = list.at(i).toElement();
+        if (!class_node.isNull() && class_node.attribute("name") == _class_attr) {
             return class_node.toElement();
         }
     }
@@ -57,78 +63,6 @@ Kitpiece::Kitpiece(QDomElement &node)
     _class = class_node.attribute("string");
 }
 
-void Kitpiece::setName(const QString &val) {
-    _name = val;
-    Util::setNodeAttr(_node, _name_attr, _name);
-}
-
-QString Kitpiece::getName() const {
-    return _name;
-}
-
-void Kitpiece::setLibname(const QString &val) {
-    _libname = val;
-    Util::setNodeAttr(_node, _libname_attr, _libname);
-}
-
-QString Kitpiece::getLibname() const {
-    return _libname;
-}
-
-void Kitpiece::setLibcode(const QString &val) {
-    _libcode = val;
-    Util::setNodeAttr(_node, _libcode_attr, _libcode);
-}
-
-QString Kitpiece::getLibcode() const {
-    return _libcode;
-}
-
-void Kitpiece::setManufacturer(const QString &val) {
-    _manufacturer = val;
-    Util::setNodeAttr(_node, _manufacturer_attr, _manufacturer);
-}
-
-QString Kitpiece::getManufacturer() const {
-    return _manufacturer;
-}
-
-void Kitpiece::setModel(const QString &val) {
-    _model = val;
-    Util::setNodeAttr(_node, _model_attr, _model);
-}
-
-QString Kitpiece::getModel() const {
-    return _model;
-}
-
-void Kitpiece::setDate(const QString &val) {
-    _date = val;
-    Util::setNodeAttr(_node, _date_attr, _date);
-}
-
-QString Kitpiece::getDate() const {
-    return _date;
-}
-
-void Kitpiece::setDimensions(const QString &val) {
-    _dimensions = val;
-    Util::setNodeAttr(_node, _dimensions_attr, _dimensions);
-}
-
-QString Kitpiece::getDimensions() const {
-    return _dimensions;
-}
-
-void Kitpiece::setBeater(const QString &val) {
-    _beater = val;
-    Util::setNodeAttr(_node, _beater_attr, _beater);
-}
-
-QString Kitpiece::getBeater() const {
-    return _beater;
-}
-
 void Kitpiece::setClass(const QString &val) {
     _class = val;
     /* class is a special case */
@@ -140,11 +74,12 @@ QString Kitpiece::getClass() const {
     return _class;
 }
 
-void Kitpiece::setSubclass(const QString &val) {
-    _subclass = val;
-    Util::setNodeAttr(_node, _subclass_attr, _subclass);
-}
-
-QString Kitpiece::getSubclass() const {
-    return _subclass;
-}
+ITEM_PARAM(Kitpiece, setName, getName, _name, _name_attr)
+ITEM_PARAM(Kitpiece, setLibname, getLibname, _libname, _libname_attr)
+ITEM_PARAM(Kitpiece, setLibcode, getLibcode, _libcode, _libcode_attr)
+ITEM_PARAM(Kitpiece, setSubclass, getSubclass, _subclass, _subclass_attr)
+ITEM_PARAM(Kitpiece, setManufacturer, getManufacturer, _manufacturer, _manufacturer_attr)
+ITEM_PARAM(Kitpiece, setModel, getModel, _model, _model_attr)
+ITEM_PARAM(Kitpiece, setDate, getDate, _date, _date_attr)
+ITEM_PARAM(Kitpiece, setDimensions, getDimensions, _dimensions, _dimensions_attr)
+ITEM_PARAM(Kitpiece, setBeater, getBeater, _beater, _beater_attr)

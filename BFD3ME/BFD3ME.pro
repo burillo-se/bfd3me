@@ -25,6 +25,7 @@ HEADERS  += bfd3me.h \
     preset.h \
     util.h \
     helper.h \
-    dbhelper.h
+    dbhelper.h \
+    boilerplate.h
 
 FORMS    += bfd3me.ui

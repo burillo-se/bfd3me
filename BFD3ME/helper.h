@@ -10,13 +10,11 @@
  * 1) open and parse the XML file with Qt XML
  * 2) find the tag we're looking for
  * 3) construct an object given the tag
+ * 5) recurse into subdirs
  * 4) rinse, repeat until we run out of files to parse
  *
  * This can take long, so the program will actually run the "load" function
  * in a separate thread.
- *
- * Since the file scanner also uses recursion and is pretty crude, we're prone
- * to stack overflows, but let's hope the user isn't an idiot...
  */
 
 #include <QString>
@@ -27,6 +25,7 @@
 #include <QTextStream>
 #include <QSharedPointer>
 #include <QDomDocument>
+#include <QStack>
 
 /*
  * Header
@@ -149,36 +148,43 @@ QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> &k) {
 /*
  * Load a list of items given a path
  *
- * This also recurses into subdirs and is probably prone to stack overflows...
+ * This also recurses into subdirs.
  */
 template <typename T>
 QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     QList<QSharedPointer<T>> result;
-    QDir d(path);
     QStringList filter;
     filter << _filter;
 
     // clear the list of errors
     errors.clear();
 
-    foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
-        QDomDocument doc = loadDoc(fi.absoluteFilePath());
-        QSharedPointer<T> k = alloc<T>(doc, _tag);
+    // create a stack for our paths to examine next
+    QStack<QString> path_stack;
+    path_stack.push(path);
 
-        // if we found a strange XML document that we couldn't parse
-        if (k.isNull()) {
-            errors << fi.absoluteFilePath();
-            continue;
+    while(!path_stack.isEmpty()) {
+        QDir d(path_stack.pop());
+        foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
+            QDomDocument doc = loadDoc(fi.absoluteFilePath());
+            QSharedPointer<T> k = alloc<T>(doc, _tag);
+
+            // if we found a strange XML document that we couldn't parse
+            if (k.isNull()) {
+                errors << fi.absoluteFilePath();
+                continue;
+            }
+
+            data_info i = {doc, fi.absoluteFilePath()};
+            _info_map[k] = i;
+            result.append(k);
         }
+        // recurse into subdirectories
+        foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+            path_stack.push(fi.absoluteFilePath());
+        }
+    }
 
-        data_info i = {doc, fi.absoluteFilePath()};
-        _info_map[k] = i;
-        result.append(k);
-    }
-    // recurse into subdirectories
-    foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
-        result.append(load(fi.absoluteFilePath()));
-    }
     return result;
 }
 

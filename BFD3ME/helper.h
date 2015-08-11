@@ -23,11 +23,13 @@ private:
         QString path;
     };
     QMap<QSharedPointer<T>, data_info> _info_map;
+    QStringList errors;
 public:
     Helper<T>(const QString &tag, const QString &filter);
     void save(QSharedPointer<T> &k);
     QSharedPointer<T> restoreFromBackup(QSharedPointer<T> &k);
     QList<QSharedPointer<T> > load(const QString &path);
+    QStringList getErrors() const;
 };
 
 template <typename T>
@@ -38,8 +40,14 @@ Helper<T>::Helper(const QString &tag, const QString &filter) {
 
 template <typename T>
 static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
-    QDomElement node = doc.elementsByTagName(tag).at(0).toElement();
-    return QSharedPointer<T>(new T(node));
+    QDomNodeList nodes = doc.elementsByTagName(tag);
+    // if we didn't find anything, or found strange metadata,
+    // we can't do anything
+    if (nodes.count() != 1) {
+        return QSharedPointer();
+    }
+    QDomElement el = nodes.at(0).toElement();
+    return QSharedPointer<T>(new T(el));
 }
 
 static QDomDocument loadDoc(const QString &path) {
@@ -52,6 +60,11 @@ static QDomDocument loadDoc(const QString &path) {
     f.close();
 
     return doc;
+}
+
+template <typename T>
+QStringList Helper<T>::getErrors() const {
+    return errors;
 }
 
 template <typename T>
@@ -100,16 +113,26 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     QDir d(path);
     QStringList filter;
     filter << _filter;
+
+    // clear the list of errors
+    errors.clear();
+
     foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
         QDomDocument doc = loadDoc(fi.absoluteFilePath());
         QSharedPointer<T> k = alloc<T>(doc, _tag);
+
+        // if we found a strange XML document that we couldn't parse
+        if (k.isNull()) {
+            errors << fi.absoluteFilePath();
+            continue;
+        }
+
         data_info i = {doc, fi.absoluteFilePath()};
         _info_map[k] = i;
         result.append(k);
     }
     // recurse into subdirectories
     foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs)) {
-        break;
         result.append(load(fi.absoluteFilePath()));
     }
     return result;

@@ -1,24 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>BFD3ME</class>
- <widget class="QMainWindow" name="BFD3ME" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="BFD3ME">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>800</width>
+    <height>500</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>BFD3ME</string>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>500</height>
+   </size>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <property name="windowTitle">
+   <string>BFD3 Metadata Editor</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1" columnstretch="0,1,0,0,0,0,0,1,0,0,0,0">
+    <item row="16" column="10">
+     <widget class="QPushButton" name="saveBtn">
+      <property name="text">
+       <string>Save</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="6" rowspan="3">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>Type</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QRadioButton" name="type_kitpiece">
+         <property name="text">
+          <string>Kitpiece</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="type_kit">
+         <property name="text">
+          <string>Kit</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="type_preset">
+         <property name="text">
+          <string>Preset</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="11">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">color: red</string>
+      </property>
+      <property name="text">
+       <string>USAGE OF THIS TOOL IS NOT ENDORSED OR SUPPORTED BY FXPANSION! USE AT YOUR OWN RISK!</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>Path:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="16" column="9">
+     <widget class="QPushButton" name="deleteBtn">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>Delete</string>
+      </property>
+     </widget>
+    </item>
+    <item row="16" column="8">
+     <widget class="QPushButton" name="restoreBtn">
+      <property name="text">
+       <string>Restore</string>
+      </property>
+     </widget>
+    </item>
+    <item row="15" column="4">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="3" rowspan="3" colspan="3">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Mode</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="mode_f">
+         <property name="text">
+          <string>Individual files</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="mode_db">
+         <property name="text">
+          <string>BFD3 Database</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="12" column="11">
+     <widget class="QCheckBox" name="dateCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="4" colspan="7">
+     <widget class="QLineEdit" name="beaterEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="4" colspan="7">
+     <widget class="QLineEdit" name="dateEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="3">
+     <widget class="QLabel" name="dimensionsLbl">
+      <property name="text">
+       <string>Dimensions:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="3">
+     <widget class="QLabel" name="beaterLbl">
+      <property name="text">
+       <string>Beater:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="14" column="11">
+     <widget class="QCheckBox" name="beaterCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="11">
+     <widget class="QCheckBox" name="dimensionsCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="13" column="4" colspan="7">
+     <widget class="QLineEdit" name="dimensionsEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="3">
+     <widget class="QLabel" name="manufacturerLbl">
+      <property name="text">
+       <string>Manufacturer:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="4" colspan="7">
+     <widget class="QLineEdit" name="classEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="4" colspan="7">
+     <widget class="QLineEdit" name="libcodeEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="4" colspan="7">
+     <widget class="QLineEdit" name="nameEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="11">
+     <widget class="QCheckBox" name="subclassCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" rowspan="13" colspan="3">
+     <widget class="QListView" name="itemlist">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="12" column="3">
+     <widget class="QLabel" name="dateLbl">
+      <property name="text">
+       <string>Date:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="4" colspan="7">
+     <widget class="QLineEdit" name="subclassEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Filter by:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="3">
+     <widget class="QLabel" name="nameLbl">
+      <property name="text">
+       <string>Name:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="2">
+     <widget class="QComboBox" name="comboBox"/>
+    </item>
+    <item row="11" column="3">
+     <widget class="QLabel" name="modelLbl">
+      <property name="text">
+       <string>Model:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4" colspan="7">
+     <widget class="QLineEdit" name="libnameEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="4" colspan="7">
+     <widget class="QLineEdit" name="manufacturerEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="3">
+     <widget class="QLabel" name="libcodeLbl">
+      <property name="text">
+       <string>Library code:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="11">
+     <widget class="QCheckBox" name="classCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="10">
+     <widget class="QPushButton" name="loadBtn">
+      <property name="text">
+       <string>Load</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" colspan="2">
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+    <item row="11" column="11">
+     <widget class="QCheckBox" name="modelCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="11" column="4" colspan="7">
+     <widget class="QLineEdit" name="modelEdit">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="3">
+     <widget class="QLabel" name="classLbl">
+      <property name="text">
+       <string>Class:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="11">
+     <widget class="QCheckBox" name="manufacturerCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>Filter:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="3">
+     <widget class="QLabel" name="subclassLbl">
+      <property name="text">
+       <string>Subclass:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="8">
+     <widget class="QLineEdit" name="pathEdit"/>
+    </item>
+    <item row="7" column="11">
+     <widget class="QCheckBox" name="libcodeCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="3">
+     <widget class="QLabel" name="libnameLbl">
+      <property name="text">
+       <string>Library:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="11">
+     <widget class="QCheckBox" name="nameCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="11">
+     <widget class="QCheckBox" name="libnameCheck">
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="9">
+     <widget class="QPushButton" name="browseBtn">
+      <property name="text">
+       <string>Browse...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="7" colspan="4">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>nameCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>nameEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>581</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>533</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>libnameCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>libnameEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>584</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>561</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>libcodeCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>libcodeEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>559</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>classCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>classEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>557</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>subclassCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>subclassEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>587</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>568</x>
+     <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>manufacturerCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>manufacturerEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>modelCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>modelEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>583</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>556</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dateEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>582</x>
+     <y>279</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>560</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dimensionsCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dimensionsEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>583</x>
+     <y>310</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>549</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>beaterCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>beaterEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>342</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>563</x>
+     <y>341</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

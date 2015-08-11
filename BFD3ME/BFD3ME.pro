@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     kit.cpp \
     kitpiece.cpp \
     preset.cpp \
-    util.cpp
+    util.cpp \
+    window_boilerplate.cpp
 
 HEADERS  += bfd3me.h \
     kit.h \
@@ -26,6 +27,7 @@ HEADERS  += bfd3me.h \
     util.h \
     helper.h \
     dbhelper.h \
-    boilerplate.h
+    boilerplate.h \
+    itemmodel.h
 
 FORMS    += bfd3me.ui

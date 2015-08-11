@@ -81,7 +81,7 @@ void DBHelper<T>::save() {
 
     QFile f(tmp_path);
     f.open(QFile::WriteOnly);
-    QTextStream out( &file );
+    QTextStream out( &f );
     _doc.save(out, 4);
     f.close();
 
@@ -98,8 +98,10 @@ QList<QSharedPointer<T>> DBHelper<T>::restoreFromBackup() {
     QString bkp_path = Util::getLastBackupPath(_path);
 
     // replace with backup
-    QFile::remove(_path);
-    QFile::rename(bkp_path, _path);
+    if (bkp_path != _path) {
+        QFile::remove(_path);
+        QFile::rename(bkp_path, _path);
+    }
 
     return load(_path);
 }

@@ -50,9 +50,10 @@ QString Util::getLastBackupPath(QString &path) {
         while (QFileInfo::exists(QString("%0.%1").arg(result).arg(num))) {
                num++;
         }
-        result += QString(".%0").arg(num - 1);
+        if (num != 0)
+            result += QString(".%0").arg(num - 1);
     }
-    return result;
+    return result != QString() ? result : path;
 }
 
 /*

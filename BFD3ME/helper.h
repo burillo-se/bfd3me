@@ -25,7 +25,7 @@
 #include <QTextStream>
 #include <QSharedPointer>
 #include <QDomDocument>
-#include <QStack>
+#include <QQueue>
 
 /*
  * Header
@@ -50,10 +50,11 @@ private:
      * TODO: include error messages
      */
     QStringList errors;
+    QSharedPointer<T> loadOne(const QString &path);
 public:
     Helper<T>(const QString &tag, const QString &filter);
-    void save(QSharedPointer<T> &k);
-    QSharedPointer<T> restoreFromBackup(QSharedPointer<T> &k);
+    void save(QSharedPointer<T> k);
+    QSharedPointer<T> restoreFromBackup(QSharedPointer<T> k);
     QList<QSharedPointer<T> > load(const QString &path);
     QStringList getErrors() const;
 };
@@ -73,7 +74,7 @@ static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
     // if we didn't find anything, or found strange metadata,
     // we can't do anything
     if (nodes.count() != 1) {
-        return QSharedPointer();
+        return QSharedPointer<T>();
     }
     QDomElement el = nodes.at(0).toElement();
     return QSharedPointer<T>(new T(el));
@@ -103,16 +104,16 @@ QStringList Helper<T>::getErrors() const {
  * Save a given item into a path we know it resides in
  */
 template <typename T>
-void Helper<T>::save(QSharedPointer<T> &k) {
-    QString &path = info_map[k].path;
+void Helper<T>::save(QSharedPointer<T> k) {
+    QString &path = _info_map[k].path;
     QString tmp_path = path + ".tmp";
     QString bkp_path = Util::getNewBackupPath(path);
 
-    QDomDocument &doc = info_map[k].doc;
+    QDomDocument &doc = _info_map[k].doc;
 
     QFile f(tmp_path);
     f.open(QFile::WriteOnly);
-    QTextStream out( &file );
+    QTextStream out( &f );
     doc.save(out, 4);
     f.close();
 
@@ -125,23 +126,31 @@ void Helper<T>::save(QSharedPointer<T> &k) {
  * Restore an item from latest backup and reload it
  */
 template <typename T>
-QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> &k) {
-    QString &path = info_map[k].path;
+QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> k) {
+    QString &path = _info_map[k].path;
     QString bkp_path = Util::getLastBackupPath(path);
-    QDomDocument &doc = info_map[k].doc;
 
     // replace with backup
-    QFile::remove(path);
-    QFile::rename(bkp_path, path);
+    if (bkp_path != path) {
+        QFile::remove(path);
+        QFile::rename(bkp_path, path);
+    }
 
-    // reload the doc
-    QDomDocument new_doc = loadDoc(path);
+    QSharedPointer<T> new_k = loadOne(path);
 
     // update our map
-    QSharedPointer<T> new_k = load(new_doc);
-    kit_info new_i = {new_doc, path};
-    info_map.remove(k);
-    info_map.insert(new_k, new_i);
+    _info_map.remove(k);
+
+    return new_k;
+}
+
+template <typename T>
+QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
+    QDomDocument doc = loadDoc(path);
+    QSharedPointer<T> new_k = alloc<T>(doc, _tag);
+    data_info new_i = {doc, path};
+    _info_map.insert(new_k, new_i);
+
     return new_k;
 }
 
@@ -159,12 +168,13 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     // clear the list of errors
     errors.clear();
 
-    // create a stack for our paths to examine next
-    QStack<QString> path_stack;
-    path_stack.push(path);
+    // create a FIFO for our paths to examine next
+    QQueue<QString> path_fifo;
+    path_fifo.push_back(path);
 
-    while(!path_stack.isEmpty()) {
-        QDir d(path_stack.pop());
+    while(!path_fifo.isEmpty()) {
+        QDir d(path_fifo.front());
+        path_fifo.pop_front();
         foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
             QDomDocument doc = loadDoc(fi.absoluteFilePath());
             QSharedPointer<T> k = alloc<T>(doc, _tag);
@@ -181,7 +191,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
         }
         // recurse into subdirectories
         foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
-            path_stack.push(fi.absoluteFilePath());
+            path_fifo.push_back(fi.absoluteFilePath());
         }
     }
 

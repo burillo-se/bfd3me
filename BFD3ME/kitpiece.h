@@ -4,6 +4,10 @@
 #include <QString>
 #include <QDomElement>
 
+/*
+ * Kitpiece got a few more parameters, but overall, same as others.
+ */
+
 class Kitpiece
 {
 private:

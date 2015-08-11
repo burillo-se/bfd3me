@@ -3,6 +3,15 @@
 #include <QFile>
 #include <QFileInfo>
 
+/*
+ * Since empty string is always contained within any other string,
+ * we need a way to filter out stuff that has an explicitly empty
+ * attribute (such as a Kitpiece without a subclass).
+ *
+ * So, here we test for contains() if the string isn't empty, but
+ * "match" the empty filter string only if the value is also an
+ * empty string.
+ */
 bool Util::matchesFilter(const QString &val, const QString &filter) {
     if (val != "" && filter.contains(val))
         return true;
@@ -11,6 +20,10 @@ bool Util::matchesFilter(const QString &val, const QString &filter) {
     return false;
 }
 
+/*
+ * We don't want to have empty node attributes, so we remove them
+ * if we are supplied an empty value.
+ */
 void Util::setNodeAttr(QDomElement &node, const QString &attr_name,
                        const QString &attr_val) {
     if (attr_val != "") {
@@ -20,6 +33,15 @@ void Util::setNodeAttr(QDomElement &node, const QString &attr_name,
     }
 }
 
+/*
+ * Backup paths go as follows:
+ * file.xml.bak
+ * file.xml.bak.0
+ * file.xml.bak.1
+ * ...
+ *
+ * Here, we get the last *existing* backup path.
+ */
 QString Util::getLastBackupPath(QString &path) {
     QString result;
     if (QFileInfo::exists(path + ".bak")) {
@@ -33,6 +55,9 @@ QString Util::getLastBackupPath(QString &path) {
     return result;
 }
 
+/*
+ * Get the first *non-existing* backup path
+ */
 QString Util::getNewBackupPath(QString &path) {
     QString result = path + ".bak";
     if (QFileInfo::exists(result)) {

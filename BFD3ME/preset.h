@@ -4,6 +4,10 @@
 #include <QString>
 #include <QDomElement>
 
+/*
+ * Again, boring...
+ */
+
 class Preset
 {
 private:

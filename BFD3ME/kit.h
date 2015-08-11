@@ -4,6 +4,10 @@
 #include <QString>
 #include <QDomElement>
 
+/*
+ * Class representing a Kit. Boring...
+ */
+
 class Kit
 {
 private:

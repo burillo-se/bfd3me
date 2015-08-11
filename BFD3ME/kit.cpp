@@ -1,6 +1,9 @@
 #include "kit.h"
 #include "util.h"
 
+/*
+ * More boilerplate code...
+ */
 
 static const QString _name_attr = "info_name";
 static const QString _libcode_attr = "info_library";

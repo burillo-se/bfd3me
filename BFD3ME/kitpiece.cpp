@@ -1,6 +1,10 @@
 #include "kitpiece.h"
 #include "util.h"
 
+/*
+ * Mostly boring boilerplate code, but few interesting bits.
+ */
+
 static const QString _name_attr = "kpi_name";
 static const QString _libcode_attr = "info_library";
 static const QString _libname_attr = "info_librarylong";
@@ -12,6 +16,9 @@ static const QString _beater_attr = "kpi_beater";
 static const QString _class_attr = "kpi_class";
 static const QString _subclass_attr = "kpi_subclass";
 
+/*
+ * In a kitpiece, class node is a special case.
+ */
 static QDomElement getClassNode(QDomElement &node) {
     QDomNodeList list = node.elementsByTagName("VString");
     for (int i = 0; i < list.count(); i++) {
@@ -28,6 +35,10 @@ static QDomElement getClassNode(QDomElement &node) {
     return el;
 }
 
+/*
+ * XML parsing is in the constructor. What happens if we
+ * can't parse? I dunno... Maybe later i'll add exceptions
+ */
 Kitpiece::Kitpiece(QDomElement &node)
 {
     _node = node;

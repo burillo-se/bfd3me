@@ -1,11 +1,18 @@
 #include "preset.h"
 #include "util.h"
 
+/*
+ * Boring, nothing to see here.
+ */
+
 static const QString _name_attr = "info_name";
 static const QString _libcode_attr = "info_library";
 static const QString _libname_attr = "info_librarylong";
 
-
+/*
+ * XML parsing is in the constructor. What happens if we
+ * can't parse? I dunno... Maybe later i'll add exceptions
+ */
 Preset::Preset(QDomElement &node)
 {
     _node = node;

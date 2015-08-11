@@ -4,11 +4,14 @@
 #include <QString>
 #include <QDomElement>
 
+/*
+ * Utility class with common functions used by the program.
+ */
+
 class Util
 {
 private:
 public:
-    Util();
     static void setNodeAttr(QDomElement &node,
                             const QString &attr_name,
                             const QString &attr_val);

@@ -1,7 +1,25 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include<QString>
+/*
+ * This class is a wrapper around a list of XML files representing Items.
+ *
+ * Each Item sits in a an XML file of its own.
+ *
+ * The parsing goes as follows:
+ * 1) open and parse the XML file with Qt XML
+ * 2) find the tag we're looking for
+ * 3) construct an object given the tag
+ * 4) rinse, repeat until we run out of files to parse
+ *
+ * This can take long, so the program will actually run the "load" function
+ * in a separate thread.
+ *
+ * Since the file scanner also uses recursion and is pretty crude, we're prone
+ * to stack overflows, but let's hope the user isn't an idiot...
+ */
+
+#include <QString>
 #include <QList>
 #include <QMap>
 #include <QFile>
@@ -10,19 +28,28 @@
 #include <QSharedPointer>
 #include <QDomDocument>
 
-#include <QtDebug>
-
+/*
+ * Header
+ */
 template<typename T>
 class Helper
 {
 private:
     QString _tag;
     QString _filter;
+    /*
+     * we want to store some data to make sure we can save the kits back to
+     * where they came from where the time comes.
+     */
     struct data_info {
         QDomDocument doc;
         QString path;
     };
     QMap<QSharedPointer<T>, data_info> _info_map;
+    /*
+     * This is for informational purposes only.
+     * TODO: include error messages
+     */
     QStringList errors;
 public:
     Helper<T>(const QString &tag, const QString &filter);
@@ -38,6 +65,9 @@ Helper<T>::Helper(const QString &tag, const QString &filter) {
     _filter = filter;
 }
 
+/*
+ * Item allocation, given a QDomDocument
+ */
 template <typename T>
 static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
     QDomNodeList nodes = doc.elementsByTagName(tag);
@@ -50,6 +80,9 @@ static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
     return QSharedPointer<T>(new T(el));
 }
 
+/*
+ * Get a QDomDocument given a file path
+ */
 static QDomDocument loadDoc(const QString &path) {
     QDomDocument doc;
     QFile f(path);
@@ -67,6 +100,9 @@ QStringList Helper<T>::getErrors() const {
     return errors;
 }
 
+/*
+ * Save a given item into a path we know it resides in
+ */
 template <typename T>
 void Helper<T>::save(QSharedPointer<T> &k) {
     QString &path = info_map[k].path;
@@ -86,6 +122,9 @@ void Helper<T>::save(QSharedPointer<T> &k) {
     QFile::rename(tmp_path, path);
 }
 
+/*
+ * Restore an item from latest backup and reload it
+ */
 template <typename T>
 QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> &k) {
     QString &path = info_map[k].path;
@@ -107,6 +146,11 @@ QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> &k) {
     return new_k;
 }
 
+/*
+ * Load a list of items given a path
+ *
+ * This also recurses into subdirs and is probably prone to stack overflows...
+ */
 template <typename T>
 QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     QList<QSharedPointer<T>> result;

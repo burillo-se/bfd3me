@@ -9,7 +9,24 @@ static const QString _model_attr = "kpi_model";
 static const QString _date_attr = "kpi_date";
 static const QString _dimensions_attr = "kpi_dimensions";
 static const QString _beater_attr = "kpi_beater";
+static const QString _class_attr = "kpi_class";
 static const QString _subclass_attr = "kpi_subclass";
+
+static QDomElement getClassNode(QDomElement &node) {
+    QDomNodeList list = node.elementsByTagName("VString");
+    for (int i = 0; i < list.count(); i++) {
+        QDomNode class_node = list[i];
+        if (class_node.attribute("name") == _class_attr) {
+            return class_node.toElement();
+        }
+    }
+    // if we're here, that means we didn't find a class node, so create it
+    QDomElement el = node.ownerDocument().createElement("VString");
+    el.setAttribute("name", "kpi_class");
+    el.setAttribute("string", "");
+    node.appendChild(el);
+    return el;
+}
 
 Kitpiece::Kitpiece(QDomElement &node)
 {
@@ -25,7 +42,7 @@ Kitpiece::Kitpiece(QDomElement &node)
     _beater = node.attribute(_beater_attr);
 
     /* class is a special case */
-    QDomElement class_node = _node.firstChildElement("VString");
+    QDomElement class_node = getClassNode(_node);
     _class = class_node.attribute("string");
 }
 
@@ -104,7 +121,7 @@ QString Kitpiece::getBeater() const {
 void Kitpiece::setClass(const QString &val) {
     _class = val;
     /* class is a special case */
-    QDomElement class_node = _node.firstChildElement("VString");
+    QDomElement class_node = getClassNode(_node);
     Util::setNodeAttr(class_node, "string", _class);
 }
 

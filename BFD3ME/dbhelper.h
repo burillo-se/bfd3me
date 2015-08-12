@@ -39,6 +39,7 @@ public:
     void save();
     QList<QSharedPointer<T>> restoreFromBackup();
     void remove(QSharedPointer<T> item);
+    void clear();
 };
 
 template <typename T>
@@ -47,12 +48,21 @@ DBHelper<T>::DBHelper(const QString &tag) : HelperBase()
     _tag = tag;
 }
 
+template <typename T>
+void DBHelper<T>::clear()
+{
+    _info_map.clear();
+}
+
 /*
  * Load a list of items given a path to the database file
  */
 template <typename T>
 QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
     QList<QSharedPointer<T>> result;
+
+    clear();
+
     _path = path;
     _doc = loadDoc(path);
 

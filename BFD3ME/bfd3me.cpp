@@ -1,12 +1,15 @@
 #include "bfd3me.h"
 #include "ui_bfd3me.h"
 
-#include <QStandardPaths>
 #include <QFileInfo>
 #include <QDir>
 #include <QMessageBox>
 
 #include "util.h"
+
+/*
+ * Source file with main window functions (load/save/restore/delete)
+ */
 
 BFD3ME::BFD3ME(QWidget *parent) :
     QMainWindow(parent),
@@ -53,56 +56,6 @@ BFD3ME::BFD3ME(QWidget *parent) :
     connect(&preset_db, SIGNAL(finished()), this, SLOT(finished()));
 }
 
-void BFD3ME::setDefaultDatabasePath() {
-    QFileInfo fi;
-    switch (_type) {
-    case Util::Kitpiece:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" KITPIECE_DB_FILENAME));
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
-    case Util::Kit:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" KIT_DB_FILENAME));
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
-    case Util::Preset:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" PRESET_DB_FILENAME));
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
-    }
-}
-
-void BFD3ME::setMode(Util::Mode mode) {
-    _mode = mode;
-    kmodel.clearList();
-    kpmodel.clearList();
-    pmodel.clearList();
-    kfmodel.invalidate();
-    kpfmodel.invalidate();
-    pfmodel.invalidate();
-    ui->pathEdit->clear();
-    clearAll();
-    if (_mode == Util::Database) {
-        setDefaultDatabasePath();
-    }
-    setEnabledButtons();
-}
-
-void BFD3ME::setType(Util::Type type) {
-    _type = type;
-    kmodel.clearList();
-    kpmodel.clearList();
-    pmodel.clearList();
-    kfmodel.invalidate();
-    kpfmodel.invalidate();
-    pfmodel.invalidate();
-    clearAll();
-    displayEdits();
-    if (_mode == Util::Database) {
-        setDefaultDatabasePath();
-    }
-    setFilterStrings();
-    setEnabledButtons();
-}
 
 /*
  * This runs in a separate thread
@@ -142,21 +95,13 @@ void BFD3ME::load() {
     connect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
 }
 
-void BFD3ME::setText(const QString &text, QLineEdit *l, bool first) {
-    if (first) {
-        l->setText(text);
-    } else {
-        if (l->text() != text) {
-            l->setText("<Multiple values>");
-        }
-    }
-}
-
 void BFD3ME::on_restoreBtn_clicked()
 {
     // bail out if no data
     if (!ui->itemlist->model())
         return;
+
+    QList<int> idxs = getIdxList();
 
     // if database, we're restoring everything at once
     if (_mode == Util::Database) {
@@ -176,37 +121,12 @@ void BFD3ME::on_restoreBtn_clicked()
         }
     // otherwise, restore each selected file
     } else {
-        QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
-        /*
-         * The moment we start updating our data, our selection indices may not be
-         * valid any more because they can be hidden by the filter. So save all the
-         * indices we are going to update.
-         */
-        QList<int> idxs;
-        switch(_type) {
-        case Util::Kitpiece:
-            foreach (QModelIndex i, list) {
-                idxs << kpfmodel.mapToSource(i).row();
-            }
-            break;
-        case Util::Kit:
-            foreach (QModelIndex i, list) {
-                idxs << kfmodel.mapToSource(i).row();
-            }
-            break;
-        case Util::Preset:
-            foreach (QModelIndex i, list) {
-                idxs << pfmodel.mapToSource(i).row();
-            }
-            break;
-        }
         switch (_type) {
         case Util::Kit:
             for (int i = 0; i < idxs.count(); i++) {
                 int idx = idxs[i];
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
-                k = kit_f.restoreFromBackup(k);
-                kmodel.setItem(k, idx);
+                kmodel.setItem(kit_f.restoreFromBackup(k), idx);
             }
             kfmodel.invalidate();
             break;
@@ -237,14 +157,14 @@ void BFD3ME::on_deleteBtn_clicked()
     if (!ui->itemlist->model())
         return;
 
+    QList<int> idxs = getIdxList();
+
     // we already know we're in database mode, so check type only
-    QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
     switch (_type) {
     case Util::Kit:
         // we need to go from the end, otherwise it'll end in disaster
-        for (int s_idx = list.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex i = list[s_idx];
-            int idx = kfmodel.mapToSource(i).row();
+        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
+            int idx = idxs[s_idx];
             QSharedPointer<Kit> k = kmodel.getItem(idx);
             kmodel.removeItem(idx);
             kit_db.remove(k);
@@ -253,9 +173,8 @@ void BFD3ME::on_deleteBtn_clicked()
         break;
     case Util::Preset:
         // we need to go from the end, otherwise it'll end in disaster
-        for (int s_idx = list.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex i = list[s_idx];
-            int idx = pfmodel.mapToSource(i).row();
+        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
+            int idx = idxs[s_idx];
             QSharedPointer<Preset> p = pmodel.getItem(idx);
             pmodel.removeItem(idx);
             preset_db.remove(p);
@@ -264,9 +183,8 @@ void BFD3ME::on_deleteBtn_clicked()
         break;
     case Util::Kitpiece:
         // we need to go from the end, otherwise it'll end in disaster
-        for (int s_idx = list.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex i = list[s_idx];
-            int idx = kpfmodel.mapToSource(i).row();
+        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
+            int idx = idxs[s_idx];
             QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
             kpmodel.removeItem(idx);
             kitpiece_db.remove(kp);
@@ -282,32 +200,7 @@ void BFD3ME::on_saveBtn_clicked()
     if (!ui->itemlist->model())
         return;
 
-    // update our data
-    QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
-
-    /*
-     * The moment we start updating our data, our selection indices may not be
-     * valid any more because they can be hidden by the filter. So save all the
-     * indices we are going to update.
-     */
-    QList<int> idxs;
-    switch(_type) {
-    case Util::Kitpiece:
-        foreach (QModelIndex i, list) {
-            idxs << kpfmodel.mapToSource(i).row();
-        }
-        break;
-    case Util::Kit:
-        foreach (QModelIndex i, list) {
-            idxs << kfmodel.mapToSource(i).row();
-        }
-        break;
-    case Util::Preset:
-        foreach (QModelIndex i, list) {
-            idxs << pfmodel.mapToSource(i).row();
-        }
-        break;
-    }
+    QList<int> idxs = getIdxList();
 
     switch (_type) {
     case Util::Kitpiece:

@@ -14,9 +14,8 @@ static const QString _attr_libname = "info_librarylong";
  * XML parsing is in the constructor. What happens if we
  * can't parse? I dunno... Maybe later i'll add exceptions
  */
-Preset::Preset(QDomElement &node)
+Preset::Preset(QDomElement &node) : Item(node)
 {
-    _node = node;
     _name = node.attribute(_attr_name);
     _libname = node.attribute(_attr_libname);
     _libcode = node.attribute(_attr_libcode);
@@ -39,6 +38,8 @@ QString Preset::getFilteredString() const {
     return QString();
 }
 
-void Preset::setFilteredString(const Util::FilterType t) {
-    _ftype = t;
+void Preset::save(QDomElement &node) const {
+    SAVE_PARAM(_name);
+    SAVE_PARAM(_libname);
+    SAVE_PARAM(_libcode);
 }

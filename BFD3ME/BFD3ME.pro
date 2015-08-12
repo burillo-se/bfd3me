@@ -20,7 +20,9 @@ SOURCES += main.cpp\
     util.cpp \
     window_boilerplate.cpp \
     helperbase.cpp \
-    window_signals.cpp
+    window_signals.cpp \
+    window_util.cpp \
+    item.cpp
 
 HEADERS  += bfd3me.h \
     kit.h \
@@ -32,6 +34,7 @@ HEADERS  += bfd3me.h \
     boilerplate.h \
     itemmodel.h \
     helperbase.h \
-    filtermodel.h
+    filtermodel.h \
+    item.h
 
 FORMS    += bfd3me.ui

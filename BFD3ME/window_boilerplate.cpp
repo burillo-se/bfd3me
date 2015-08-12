@@ -8,6 +8,10 @@
 
 #include "util.h"
 
+/*
+ * Source file with various boring boilerplate code
+ */
+
 #define HIDE(x) do {\
     ui->##x##Edit->hide();\
     ui->##x##Check->hide();\
@@ -59,16 +63,6 @@ void BFD3ME::displayEdits() {
         SHOW(dimensions);
         SHOW(beater);
     }
-}
-
-void BFD3ME::setFilterStrings() {
-    QStringList filters;
-    filters << "No filter" << "Name" << "Library name" << "Library code";
-    if (_type == Util::Kitpiece) {
-        filters << "Class" << "Subclass" << "Manufacturer" << "Model" << "Date" << "Dimensions" << "Beater";
-    }
-    ui->comboBox->clear();
-    ui->comboBox->insertItems(0, filters);
 }
 
 void BFD3ME::on_mode_f_toggled(bool checked)

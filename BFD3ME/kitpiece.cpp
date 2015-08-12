@@ -45,9 +45,8 @@ static QDomElement getClassNode(QDomElement &node) {
  * XML parsing is in the constructor. What happens if we
  * can't parse? I dunno... Maybe later i'll add exceptions
  */
-Kitpiece::Kitpiece(QDomElement &node)
+Kitpiece::Kitpiece(QDomElement &node) : Item(node)
 {
-    _node = node;
     _name = node.attribute(_attr_name);
     _libname = node.attribute(_attr_libname);
     _libcode = node.attribute(_attr_libcode);
@@ -65,6 +64,9 @@ Kitpiece::Kitpiece(QDomElement &node)
 
 void Kitpiece::setClass(const QString &val) {
     _class = val;
+    if(!_saveToElement)
+        return;
+
     /* class is a special case */
     QDomElement class_node = getClassNode(_node);
     Util::setNodeAttr(class_node, "string", _class);
@@ -111,6 +113,18 @@ QString Kitpiece::getFilteredString() const {
     return QString();
 }
 
-void Kitpiece::setFilteredString(const Util::FilterType t) {
-    _ftype = t;
+void Kitpiece::save(QDomElement &node) const {
+    SAVE_PARAM(_name);
+    SAVE_PARAM(_libname);
+    SAVE_PARAM(_libcode);
+    SAVE_PARAM(_manufacturer);
+    SAVE_PARAM(_date);
+    SAVE_PARAM(_model);
+    SAVE_PARAM(_dimensions);
+    SAVE_PARAM(_beater);
+    SAVE_PARAM(_subclass);
+
+    // class is a special case
+    QDomElement class_node = getClassNode(node);
+    Util::setNodeAttr(class_node, "string", _class);
 }

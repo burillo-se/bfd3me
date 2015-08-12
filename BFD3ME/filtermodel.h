@@ -32,6 +32,8 @@ template <typename T>
 bool FilterModel<T>::filterAcceptsRow(int source_row, const QModelIndex &) const {
     ItemModel<T>* model = (ItemModel<T>*) sourceModel();
     QSharedPointer<T> i = model->getItem(source_row);
+    if (i.isNull())
+        return false;
     i->setFilteredString(filter_type);
     if (filter_type == Util::No_Filter) {
         return true;

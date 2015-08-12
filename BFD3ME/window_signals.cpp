@@ -5,6 +5,10 @@
 
 #include "util.h"
 
+/*
+ * Source file with custom window signals
+ */
+
 void BFD3ME::progressChanged(QString progressStr, int progressDone, int progressTodo) {
     ui->statusBar->showMessage(QString("%0: %1/%2").arg(progressStr)
                                .arg(progressDone).arg(progressTodo));

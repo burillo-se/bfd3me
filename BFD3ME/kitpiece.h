@@ -5,12 +5,13 @@
 #include <QDomElement>
 
 #include "util.h"
+#include "item.h"
 
 /*
  * Kitpiece got a few more parameters, but overall, same as others.
  */
 
-class Kitpiece
+class Kitpiece : public Item
 {
 private:
     QString _name;
@@ -23,8 +24,6 @@ private:
     QString _beater;
     QString _class;
     QString _subclass;
-    QDomElement _node;
-    Util::FilterType _ftype;
 public:
     Kitpiece(QDomElement &node);
     void setName(const QString &val);
@@ -47,8 +46,8 @@ public:
     QString getClass() const;
     void setSubclass(const QString &val);
     QString getSubclass() const;
-    void setFilteredString(const Util::FilterType t);
     QString getFilteredString() const;
+    void save(QDomElement &node) const;
 };
 
 #endif // KITPIECE_H

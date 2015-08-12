@@ -5,19 +5,18 @@
 #include <QDomElement>
 
 #include "util.h"
+#include "item.h"
 
 /*
  * Again, boring...
  */
 
-class Preset
+class Preset : public Item
 {
 private:
     QString _name;
     QString _libname;
     QString _libcode;
-    QDomElement _node;
-    Util::FilterType _ftype;
 public:
     Preset(QDomElement &node);
     void setName(const QString &val);
@@ -26,8 +25,8 @@ public:
     QString getLibname() const;
     void setLibcode(const QString &val);
     QString getLibcode() const;
-    void setFilteredString(const Util::FilterType t);
     QString getFilteredString() const;
+    void save(QDomElement &node) const;
 };
 
 #endif // PRESET_H

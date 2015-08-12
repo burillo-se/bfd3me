@@ -21,9 +21,12 @@ public:
         return QVariant();
     }
     QSharedPointer<T> getItem(int idx) {
+        if (list.empty() || idx >= list.count())
+            return QSharedPointer<T>();
         return list[idx];
     }
     void setList(QList<QSharedPointer<T>> &newList) {
+        list.clear();
         list = newList;
         int count = list.count();
         emit dataChanged(createIndex(0, 0), createIndex(count, 0));
@@ -34,7 +37,7 @@ public:
     }
     void removeItem(int idx) {
         list.removeAt(idx);
-        emit dataChanged(createIndex(idx, 0), createIndex(idx, 0));
+        emit dataChanged(createIndex(idx - 1, 0), createIndex(idx, 0));
     }
 
     void clearList() {

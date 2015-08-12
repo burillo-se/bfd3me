@@ -37,21 +37,14 @@ class Helper : public HelperBase
 private:
     QString _tag;
     QString _filter;
-    /*
-     * we want to store some data to make sure we can save the kits back to
-     * where they came from where the time comes.
-     */
-    struct data_info {
-        QDomDocument doc;
-        QString path;
-    };
-    QMap<QSharedPointer<T>, data_info> _info_map;
+    QMap<QSharedPointer<T>, QString> _info_map;
     QSharedPointer<T> loadOne(const QString &path);
 public:
     Helper<T>(const QString &tag, const QString &filter);
     void save(QSharedPointer<T> k);
     QSharedPointer<T> restoreFromBackup(QSharedPointer<T> k);
     QList<QSharedPointer<T> > load(const QString &path);
+    void clear();
 };
 
 template <typename T>
@@ -60,18 +53,32 @@ Helper<T>::Helper(const QString &tag, const QString &filter) : HelperBase() {
     _filter = filter;
 }
 
+template <typename T>
+void Helper<T>::clear()
+{
+    _info_map.clear();
+}
+
+static QDomElement getElement(QDomDocument &doc, const QString &tag) {
+    QDomNodeList nodes = doc.elementsByTagName(tag);
+    if (nodes.count() != 1) {
+        return QDomElement();
+    }
+    return nodes.at(0).toElement();
+}
+
 /*
  * Item allocation, given a QDomDocument
  */
 template <typename T>
 static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
-    QDomNodeList nodes = doc.elementsByTagName(tag);
+    QDomElement el = getElement(doc, tag);
+
     // if we didn't find anything, or found strange metadata,
     // we can't do anything
-    if (nodes.count() != 1) {
+    if (el.isNull()) {
         return QSharedPointer<T>();
     }
-    QDomElement el = nodes.at(0).toElement();
     return QSharedPointer<T>(new T(el));
 }
 
@@ -82,8 +89,8 @@ QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
         return QSharedPointer<T>();
     }
     QSharedPointer<T> new_k = alloc<T>(doc, _tag);
-    data_info new_i = {doc, path};
-    _info_map.insert(new_k, new_i);
+    new_k->setSaveToElement(false);
+    _info_map.insert(new_k, path);
 
     return new_k;
 }
@@ -93,8 +100,11 @@ QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
  */
 template <typename T>
 void Helper<T>::save(QSharedPointer<T> k) {
-    QString &path = _info_map[k].path;
-    QDomDocument &doc = _info_map[k].doc;
+    QString &path = _info_map[k];
+
+    QDomDocument doc = loadDoc(path);
+    QDomElement el = getElement(doc, _tag);
+    k->save(el);
 
     saveDoc(doc, path);
 }
@@ -104,7 +114,7 @@ void Helper<T>::save(QSharedPointer<T> k) {
  */
 template <typename T>
 QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> k) {
-    QString &path = _info_map[k].path;
+    QString &path = _info_map[k];
 
     restoreFile(path);
 
@@ -130,6 +140,8 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     // clear counters
     _progressDone = 0;
     _progressTodo = 0;
+
+    clear();
 
     // create a FIFO for our paths to examine next
     QQueue<QString> path_fifo;

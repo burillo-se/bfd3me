@@ -24,8 +24,8 @@ public:
     static void setNodeAttr(QDomElement &node,
                             const QString &attr_name,
                             const QString &attr_val);
-    static QString getNewBackupPath(QString &path);
-    static QString getLastBackupPath(QString &path);
+    static QString getNewBackupPath(const QString &path);
+    static QString getLastBackupPath(const QString &path);
     static bool matchesFilter(const QString &val,
                               const QString &filter);
     enum Mode {
@@ -50,24 +50,6 @@ public:
         Dimensions,
         Beater
     };
-};
-
-/*
- * Q_OBJECT macro needed for signals/slots support doesn't support templates,
- * so we create a dummy object with a signal, and then inherit our templates from it.
- */
-class HelperBase : public QObject
-{
-    Q_OBJECT
-protected:
-    int _progressDone;
-    int _progressTodo;
-public:
-    HelperBase(QObject *parent = 0) : QObject(parent) {}
-signals:
-    void progressChanged(QString,int,int);
-    void finished();
-    void error(QString,QString);
 };
 
 #endif // UTIL_H

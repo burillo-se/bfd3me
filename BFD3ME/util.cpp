@@ -42,7 +42,7 @@ void Util::setNodeAttr(QDomElement &node, const QString &attr_name,
  *
  * Here, we get the last *existing* backup path.
  */
-QString Util::getLastBackupPath(QString &path) {
+QString Util::getLastBackupPath(const QString &path) {
     QString result;
     if (QFileInfo::exists(path + ".bak")) {
         result = path + ".bak";
@@ -59,7 +59,7 @@ QString Util::getLastBackupPath(QString &path) {
 /*
  * Get the first *non-existing* backup path
  */
-QString Util::getNewBackupPath(QString &path) {
+QString Util::getNewBackupPath(const QString &path) {
     QString result = path + ".bak";
     if (QFileInfo::exists(result)) {
         unsigned num = 0;

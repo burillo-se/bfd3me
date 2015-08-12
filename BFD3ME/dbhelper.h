@@ -14,13 +14,10 @@
  * single file instead of from multiple files.
  */
 
-#include <QString>
-#include <QDomDocument>
 #include <QList>
-#include <QFile>
-#include <QTextStream>
 #include <QSharedPointer>
 
+#include "helperbase.h"
 #include "util.h"
 
 /*
@@ -55,17 +52,18 @@ DBHelper<T>::DBHelper(const QString &tag) : HelperBase()
  */
 template <typename T>
 QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
-    _path = path;
-    QFile f(_path);
-    f.open(QFile::ReadOnly);
-    QTextStream in(&f);
-    _doc.setContent(in.readAll());
-    f.close();
-
     QList<QSharedPointer<T>> result;
+    _path = path;
+    _doc = loadDoc(path);
+
+    if (_doc.isNull()) {
+        return result;
+    }
+
     QDomNodeList nodeList = _doc.elementsByTagName(_tag);
     _progressDone = 0;
     _progressTodo = nodeList.count();
+
     for (int i = 0; i < nodeList.count(); i++) {
         QDomElement el = nodeList.at(i).toElement();
         QSharedPointer<T> k(new T(el));
@@ -83,18 +81,7 @@ QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
  */
 template <typename T>
 void DBHelper<T>::save() {
-    QString tmp_path = _path + ".tmp";
-    QString bkp_path = Util::getNewBackupPath(_path);
-
-    QFile f(tmp_path);
-    f.open(QFile::WriteOnly);
-    QTextStream out( &f );
-    _doc.save(out, 4);
-    f.close();
-
-    // backup the original
-    QFile::rename(_path, bkp_path);
-    QFile::rename(tmp_path, _path);
+    saveDoc(_doc, _path);
 }
 
 /*
@@ -102,13 +89,7 @@ void DBHelper<T>::save() {
  */
 template <typename T>
 QList<QSharedPointer<T>> DBHelper<T>::restoreFromBackup() {
-    QString bkp_path = Util::getLastBackupPath(_path);
-
-    // replace with backup
-    if (bkp_path != _path) {
-        QFile::remove(_path);
-        QFile::rename(bkp_path, _path);
-    }
+    restoreFile(_path);
 
     return load(_path);
 }

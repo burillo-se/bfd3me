@@ -17,16 +17,14 @@
  * in a separate thread.
  */
 
-#include <QString>
 #include <QList>
 #include <QMap>
-#include <QFile>
 #include <QDir>
 #include <QTextStream>
 #include <QSharedPointer>
-#include <QDomDocument>
 #include <QQueue>
 
+#include "helperbase.h"
 #include "util.h"
 
 /*
@@ -77,24 +75,12 @@ static QSharedPointer<T> alloc(QDomDocument &doc, const QString &tag) {
     return QSharedPointer<T>(new T(el));
 }
 
-/*
- * Get a QDomDocument given a file path
- */
-static QDomDocument loadDoc(const QString &path) {
-    QDomDocument doc;
-    QFile f(path);
-    f.open(QFile::ReadOnly);
-
-    QTextStream in(&f);
-    doc.setContent(in.readAll());
-    f.close();
-
-    return doc;
-}
-
 template <typename T>
 QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
     QDomDocument doc = loadDoc(path);
+    if (doc.isNull()) {
+        return QSharedPointer<T>();
+    }
     QSharedPointer<T> new_k = alloc<T>(doc, _tag);
     data_info new_i = {doc, path};
     _info_map.insert(new_k, new_i);
@@ -108,20 +94,9 @@ QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
 template <typename T>
 void Helper<T>::save(QSharedPointer<T> k) {
     QString &path = _info_map[k].path;
-    QString tmp_path = path + ".tmp";
-    QString bkp_path = Util::getNewBackupPath(path);
-
     QDomDocument &doc = _info_map[k].doc;
 
-    QFile f(tmp_path);
-    f.open(QFile::WriteOnly);
-    QTextStream out( &f );
-    doc.save(out, 4);
-    f.close();
-
-    // backup the original
-    QFile::rename(path, bkp_path);
-    QFile::rename(tmp_path, path);
+    saveDoc(doc, path);
 }
 
 /*
@@ -130,13 +105,8 @@ void Helper<T>::save(QSharedPointer<T> k) {
 template <typename T>
 QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> k) {
     QString &path = _info_map[k].path;
-    QString bkp_path = Util::getLastBackupPath(path);
 
-    // replace with backup
-    if (bkp_path != path) {
-        QFile::remove(path);
-        QFile::rename(bkp_path, path);
-    }
+    restoreFile(path);
 
     QSharedPointer<T> new_k = loadOne(path);
 
@@ -172,8 +142,10 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
 
         QFileInfoList fileInfoList = d.entryInfoList(filter, QDir::Files);
         QFileInfoList dirInfoList = d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
         _progressTodo += fileInfoList.count() + dirInfoList.count();
         _progressDone += fileInfoList.count();
+
         emit progressChanged("Scanning", _progressDone,_progressTodo);
 
         foreach (QFileInfo fi, fileInfoList) {
@@ -187,6 +159,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     }
     _progressDone = 0;
     _progressTodo = file_fifo.count();
+
     while (!file_fifo.empty()) {
         QString path = file_fifo.front();
         file_fifo.pop_front();
@@ -200,6 +173,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
         if (k.isNull()) {
             continue;
         }
+        result.append(k);
     }
     emit finished();
 

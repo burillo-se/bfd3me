@@ -4,7 +4,6 @@
 #include <QStandardPaths>
 #include <QFileInfo>
 #include <QDir>
-#include <QFileDialog>
 #include <QMessageBox>
 
 #include "util.h"

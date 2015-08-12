@@ -3,6 +3,7 @@
 
 #include <QStandardPaths>
 #include <QFileInfo>
+#include <QFileDialog>
 #include <QDir>
 
 #include "util.h"

@@ -22,6 +22,18 @@ BFD3ME::BFD3ME(QWidget *parent) :
     ui->setupUi(this);
     setMode(Util::Files);
     setType(Util::Kitpiece);
+
+    // set up thread signals
+    connect(&loadThread, SIGNAL(started()), this, SLOT(load()));
+    connect(&loadThread, SIGNAL(finished()), ui->statusBar, SLOT(clearMessage()));
+
+    // set up Helper signals to communicate with the thread
+    connect(&kit_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&kit_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kitpiece_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&kitpiece_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&preset_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&preset_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
 }
 
 void BFD3ME::setDefaultDatabasePath() {
@@ -80,8 +92,15 @@ void BFD3ME::on_comboBox_currentIndexChanged(int index)
     Util::FilterType filter_type = (Util::FilterType) index;
 }
 
-void BFD3ME::on_loadBtn_clicked()
-{
+void BFD3ME::progressChanged(QString progressStr, int progressDone, int progressTodo) {
+    ui->statusBar->showMessage(QString("%0: %1/%2").arg(progressStr)
+                               .arg(progressDone).arg(progressTodo));
+}
+
+/*
+ * This runs in a separate thread
+ */
+void BFD3ME::load() {
     disconnect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     if (_mode == Util::Database) {
         switch (_type) {
@@ -116,6 +135,13 @@ void BFD3ME::on_loadBtn_clicked()
     }
     ui->itemlist->setModel(&fmodel);
     connect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+}
+
+void BFD3ME::on_loadBtn_clicked()
+{
+    if (!loadThread.isRunning() && ui->pathEdit->text() != "") {
+        loadThread.start();
+    }
 }
 
 void BFD3ME::setText(const QString &text, QLineEdit *l, bool first) {
@@ -199,6 +225,10 @@ void BFD3ME::on_browseBtn_clicked()
 
 void BFD3ME::on_restoreBtn_clicked()
 {
+    // bail out if no data
+    if (!ui->itemlist->model())
+        return;
+
     // if database, we're restoring everything at once
     if (_mode == Util::Database) {
         switch (_type) {
@@ -244,6 +274,10 @@ void BFD3ME::on_restoreBtn_clicked()
 
 void BFD3ME::on_deleteBtn_clicked()
 {
+    // bail out if no data
+    if (!ui->itemlist->model())
+        return;
+
     // we already know we're in database mode, so check type only
     QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
     switch (_type) {
@@ -282,6 +316,10 @@ void BFD3ME::on_deleteBtn_clicked()
 
 void BFD3ME::on_saveBtn_clicked()
 {
+    // bail out if no data
+    if (!ui->itemlist->model())
+        return;
+
     // update our data
     QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
     foreach (QModelIndex i, list) {

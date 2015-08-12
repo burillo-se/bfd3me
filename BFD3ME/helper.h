@@ -30,8 +30,23 @@
 /*
  * Header
  */
+
+/*
+ * Q_OBJECT macro needed for signals/slots support doesn't support templates,
+ * so we create a dummy object with a signal, and then inherit our template from it.
+ */
+class Dummy : public QObject
+{
+    Q_OBJECT
+public:
+    Dummy(QObject *parent = 0) : QObject(parent) {}
+signals:
+    void progressChanged(QString,int,int);
+    void finished();
+};
+
 template<typename T>
-class Helper
+class Helper : public Dummy
 {
 private:
     QString _tag;
@@ -51,6 +66,8 @@ private:
      */
     QStringList errors;
     QSharedPointer<T> loadOne(const QString &path);
+    int _progressDone;
+    int _progressTodo;
 public:
     Helper<T>(const QString &tag, const QString &filter);
     void save(QSharedPointer<T> k);
@@ -60,7 +77,7 @@ public:
 };
 
 template <typename T>
-Helper<T>::Helper(const QString &tag, const QString &filter) {
+Helper<T>::Helper(const QString &tag, const QString &filter) : Dummy() {
     _tag = tag;
     _filter = filter;
 }
@@ -93,6 +110,16 @@ static QDomDocument loadDoc(const QString &path) {
     f.close();
 
     return doc;
+}
+
+template <typename T>
+QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
+    QDomDocument doc = loadDoc(path);
+    QSharedPointer<T> new_k = alloc<T>(doc, _tag);
+    data_info new_i = {doc, path};
+    _info_map.insert(new_k, new_i);
+
+    return new_k;
 }
 
 template <typename T>
@@ -144,16 +171,6 @@ QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> k) {
     return new_k;
 }
 
-template <typename T>
-QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
-    QDomDocument doc = loadDoc(path);
-    QSharedPointer<T> new_k = alloc<T>(doc, _tag);
-    data_info new_i = {doc, path};
-    _info_map.insert(new_k, new_i);
-
-    return new_k;
-}
-
 /*
  * Load a list of items given a path
  *
@@ -168,32 +185,51 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     // clear the list of errors
     errors.clear();
 
+    // clear counters
+    _progressDone = 0;
+    _progressTodo = 0;
+
     // create a FIFO for our paths to examine next
     QQueue<QString> path_fifo;
+    QQueue<QString> file_fifo;
     path_fifo.push_back(path);
 
     while(!path_fifo.isEmpty()) {
         QDir d(path_fifo.front());
         path_fifo.pop_front();
-        foreach (QFileInfo fi, d.entryInfoList(filter, QDir::Files)) {
-            QDomDocument doc = loadDoc(fi.absoluteFilePath());
-            QSharedPointer<T> k = alloc<T>(doc, _tag);
 
-            // if we found a strange XML document that we couldn't parse
-            if (k.isNull()) {
-                errors << fi.absoluteFilePath();
-                continue;
-            }
+        QFileInfoList fileInfoList = d.entryInfoList(filter, QDir::Files);
+        QFileInfoList dirInfoList = d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        _progressTodo += fileInfoList.count() + dirInfoList.count();
+        _progressDone += fileInfoList.count();
+        emit progressChanged("Scanning", _progressDone,_progressTodo);
 
-            data_info i = {doc, fi.absoluteFilePath()};
-            _info_map[k] = i;
-            result.append(k);
+        foreach (QFileInfo fi, fileInfoList) {
+            file_fifo.push_back(fi.absoluteFilePath());
         }
+
         // recurse into subdirectories
-        foreach (QFileInfo fi, d.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        foreach (QFileInfo fi, dirInfoList) {
             path_fifo.push_back(fi.absoluteFilePath());
         }
     }
+    _progressTodo = file_fifo.count();
+    while (!file_fifo.empty()) {
+        QString path = file_fifo.front();
+        file_fifo.pop_front();
+
+        QSharedPointer<T> k = loadOne(path);
+
+        _progressDone++;
+        emit progressChanged("Parsing",_progressDone,_progressTodo);
+
+        // if we found a strange XML document that we couldn't parse
+        if (k.isNull()) {
+            errors << path;
+            continue;
+        }
+    }
+    emit finished();
 
     return result;
 }

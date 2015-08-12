@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QSortFilterProxyModel>
 #include <QLineEdit>
+#include <QThread>
+#include <QObject>
 
 #include "util.h"
 #include "kit.h"
@@ -34,14 +36,12 @@ private slots:
     void on_comboBox_currentIndexChanged(int index);
     void on_loadBtn_clicked();
     void on_selection_changed();
-
     void on_browseBtn_clicked();
-
     void on_restoreBtn_clicked();
-
     void on_deleteBtn_clicked();
-
     void on_saveBtn_clicked();
+    void load();
+    void progressChanged(QString progressStr, int progressDone, int progressTodo);
 
 private:
     void setMode(Util::Mode mode);
@@ -67,6 +67,7 @@ private:
     ItemModel<Preset> pmodel;
 
     QSortFilterProxyModel fmodel;
+    QThread loadThread;
 };
 
 #endif // BFD3ME_H

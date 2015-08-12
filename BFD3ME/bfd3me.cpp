@@ -34,6 +34,14 @@ BFD3ME::BFD3ME(QWidget *parent) :
     connect(&kitpiece_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
     connect(&preset_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
     connect(&preset_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+
+    // set up DBHelper signals to communicate with the thread
+    connect(&kit_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&kit_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kitpiece_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&kitpiece_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&preset_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
+    connect(&preset_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
 }
 
 void BFD3ME::setDefaultDatabasePath() {

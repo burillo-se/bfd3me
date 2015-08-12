@@ -27,26 +27,14 @@
 #include <QDomDocument>
 #include <QQueue>
 
+#include "util.h"
+
 /*
  * Header
  */
 
-/*
- * Q_OBJECT macro needed for signals/slots support doesn't support templates,
- * so we create a dummy object with a signal, and then inherit our template from it.
- */
-class Dummy : public QObject
-{
-    Q_OBJECT
-public:
-    Dummy(QObject *parent = 0) : QObject(parent) {}
-signals:
-    void progressChanged(QString,int,int);
-    void finished();
-};
-
 template<typename T>
-class Helper : public Dummy
+class Helper : public HelperBase
 {
 private:
     QString _tag;
@@ -60,24 +48,16 @@ private:
         QString path;
     };
     QMap<QSharedPointer<T>, data_info> _info_map;
-    /*
-     * This is for informational purposes only.
-     * TODO: include error messages
-     */
-    QStringList errors;
     QSharedPointer<T> loadOne(const QString &path);
-    int _progressDone;
-    int _progressTodo;
 public:
     Helper<T>(const QString &tag, const QString &filter);
     void save(QSharedPointer<T> k);
     QSharedPointer<T> restoreFromBackup(QSharedPointer<T> k);
     QList<QSharedPointer<T> > load(const QString &path);
-    QStringList getErrors() const;
 };
 
 template <typename T>
-Helper<T>::Helper(const QString &tag, const QString &filter) : Dummy() {
+Helper<T>::Helper(const QString &tag, const QString &filter) : HelperBase() {
     _tag = tag;
     _filter = filter;
 }
@@ -120,11 +100,6 @@ QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
     _info_map.insert(new_k, new_i);
 
     return new_k;
-}
-
-template <typename T>
-QStringList Helper<T>::getErrors() const {
-    return errors;
 }
 
 /*
@@ -182,9 +157,6 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
     QStringList filter;
     filter << _filter;
 
-    // clear the list of errors
-    errors.clear();
-
     // clear counters
     _progressDone = 0;
     _progressTodo = 0;
@@ -213,6 +185,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
             path_fifo.push_back(fi.absoluteFilePath());
         }
     }
+    _progressDone = 0;
     _progressTodo = file_fifo.count();
     while (!file_fifo.empty()) {
         QString path = file_fifo.front();
@@ -225,7 +198,6 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
 
         // if we found a strange XML document that we couldn't parse
         if (k.isNull()) {
-            errors << path;
             continue;
         }
     }

@@ -21,13 +21,15 @@
 #include <QTextStream>
 #include <QSharedPointer>
 
+#include "util.h"
+
 /*
  * Template class header
  *
  * Implementations are below.
  */
 template <typename T>
-class DBHelper
+class DBHelper : public HelperBase
 {
 private:
     QString _tag;
@@ -43,7 +45,7 @@ public:
 };
 
 template <typename T>
-DBHelper<T>::DBHelper(const QString &tag)
+DBHelper<T>::DBHelper(const QString &tag) : HelperBase()
 {
     _tag = tag;
 }
@@ -62,12 +64,17 @@ QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
 
     QList<QSharedPointer<T>> result;
     QDomNodeList nodeList = _doc.elementsByTagName(_tag);
+    _progressDone = 0;
+    _progressTodo = nodeList.count();
     for (int i = 0; i < nodeList.count(); i++) {
         QDomElement el = nodeList.at(i).toElement();
         QSharedPointer<T> k(new T(el));
         result.append(k);
         _info_map.insert(k, el);
+        _progressDone++;
+        emit progressChanged("Parsing", _progressDone, _progressTodo);
     }
+    emit finished();
     return result;
 }
 

@@ -25,3 +25,20 @@ Preset::Preset(QDomElement &node)
 ITEM_PARAM(Preset, Name, _name)
 ITEM_PARAM(Preset, Libname, _libname)
 ITEM_PARAM(Preset, Libcode, _libcode)
+
+QString Preset::getFilteredString() const {
+    switch (_ftype) {
+    case Util::Name:
+        return _name;
+    case Util::Libcode:
+        return _libcode;
+    case Util::Libname:
+        return _libname;
+    }
+    // can't happen
+    return QString();
+}
+
+void Preset::setFilteredString(const Util::FilterType t) {
+    _ftype = t;
+}

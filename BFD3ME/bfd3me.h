@@ -14,6 +14,7 @@
 #include "helper.h"
 #include "dbhelper.h"
 #include "itemmodel.h"
+#include "filtermodel.h"
 
 namespace Ui {
 class BFD3ME;
@@ -47,6 +48,8 @@ private slots:
 
     void on_pathEdit_textChanged(const QString &arg1);
 
+    void on_lineEdit_textChanged(const QString &arg1);
+
 private:
     void setMode(Util::Mode mode);
     void setType(Util::Type type);
@@ -71,7 +74,9 @@ private:
     ItemModel<Kitpiece> kpmodel;
     ItemModel<Preset> pmodel;
 
-    QSortFilterProxyModel fmodel;
+    FilterModel<Kit> kfmodel;
+    FilterModel<Kitpiece> kpfmodel;
+    FilterModel<Preset> pfmodel;
     QThread loadThread;
     QStringList errors;
 };

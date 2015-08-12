@@ -31,6 +31,7 @@ HEADERS  += bfd3me.h \
     dbhelper.h \
     boilerplate.h \
     itemmodel.h \
-    helperbase.h
+    helperbase.h \
+    filtermodel.h
 
 FORMS    += bfd3me.ui

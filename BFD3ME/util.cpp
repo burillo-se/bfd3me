@@ -13,7 +13,7 @@
  * empty string.
  */
 bool Util::matchesFilter(const QString &val, const QString &filter) {
-    if (val != "" && filter.contains(val))
+    if (val != "" && filter.toLower().contains(val.toLower()))
         return true;
     if (val == "" && filter == "")
         return true;

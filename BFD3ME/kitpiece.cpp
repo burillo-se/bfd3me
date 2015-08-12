@@ -83,3 +83,34 @@ ITEM_PARAM(Kitpiece, Model, _model)
 ITEM_PARAM(Kitpiece, Date, _date)
 ITEM_PARAM(Kitpiece, Dimensions, _dimensions)
 ITEM_PARAM(Kitpiece, Beater, _beater)
+
+QString Kitpiece::getFilteredString() const {
+    switch (_ftype) {
+    case Util::Name:
+        return _name;
+    case Util::Libcode:
+        return _libcode;
+    case Util::Libname:
+        return _libname;
+    case Util::Manufacturer:
+        return _manufacturer;
+    case Util::Model:
+        return _model;
+    case Util::Date:
+        return _date;
+    case Util::Dimensions:
+        return _dimensions;
+    case Util::Beater:
+        return _beater;
+    case Util::Class:
+        return _class;
+    case Util::Subclass:
+        return _subclass;
+    }
+    // can't happen
+    return QString();
+}
+
+void Kitpiece::setFilteredString(const Util::FilterType t) {
+    _ftype = t;
+}

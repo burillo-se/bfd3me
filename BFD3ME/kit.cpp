@@ -22,3 +22,20 @@ Kit::Kit(QDomElement &node)
 ITEM_PARAM(Kit, Name, _name)
 ITEM_PARAM(Kit, Libname, _libname)
 ITEM_PARAM(Kit, Libcode, _libcode)
+
+QString Kit::getFilteredString() const {
+    switch (_ftype) {
+    case Util::Name:
+        return _name;
+    case Util::Libcode:
+        return _libcode;
+    case Util::Libname:
+        return _libname;
+    }
+    // can't happen
+    return QString();
+}
+
+void Kit::setFilteredString(const Util::FilterType t) {
+    _ftype = t;
+}

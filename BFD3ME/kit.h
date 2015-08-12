@@ -4,6 +4,8 @@
 #include <QString>
 #include <QDomElement>
 
+#include "util.h"
+
 /*
  * Class representing a Kit. Boring...
  */
@@ -15,6 +17,7 @@ private:
     QString _libname;
     QString _libcode;
     QDomElement _node;
+    Util::FilterType _ftype;
 public:
     Kit(QDomElement &node);
     void setName(const QString &val);
@@ -23,6 +26,8 @@ public:
     QString getLibname() const;
     void setLibcode(const QString &val);
     QString getLibcode() const;
+    void setFilteredString(const Util::FilterType t);
+    QString getFilteredString() const;
 };
 
 #endif // KIT_H

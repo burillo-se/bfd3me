@@ -2,6 +2,7 @@
 
 #include <QTextStream>
 #include <QFile>
+#include <QDir>
 
 #include "util.h"
 
@@ -18,7 +19,7 @@ QDomDocument HelperBase::loadDoc(const QString &path) {
 
     QTextStream in(&f);
     if (!doc.setContent(in.readAll(), false, &errorStr, &line, &col)) {
-        emit error(path, QString("Line %0 column %1: %2").arg(line).arg(col).arg(errorStr));
+        emit error(QDir::toNativeSeparators(path), QString("Line %0 column %1: %2").arg(line).arg(col).arg(errorStr));
     }
     f.close();
 

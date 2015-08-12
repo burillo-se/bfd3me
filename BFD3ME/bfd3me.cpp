@@ -29,19 +29,29 @@ BFD3ME::BFD3ME(QWidget *parent) :
 
     // set up Helper signals to communicate with the thread
     connect(&kit_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&kit_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kit_f, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&kit_f, SIGNAL(finished()), this, SLOT(finished()));
+
     connect(&kitpiece_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&kitpiece_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kitpiece_f, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&kitpiece_f, SIGNAL(finished()), this, SLOT(finished()));
+
     connect(&preset_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&preset_f, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&preset_f, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&preset_f, SIGNAL(finished()), this, SLOT(finished()));
 
     // set up DBHelper signals to communicate with the thread
     connect(&kit_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&kit_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kit_db, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&kit_db, SIGNAL(finished()), this, SLOT(finished()));
+
     connect(&kitpiece_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&kitpiece_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&kitpiece_db, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&kitpiece_db, SIGNAL(finished()), this, SLOT(finished()));
+
     connect(&preset_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
-    connect(&preset_db, SIGNAL(finished()), &loadThread, SLOT(quit()));
+    connect(&preset_db, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
+    connect(&preset_db, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 void BFD3ME::setDefaultDatabasePath() {
@@ -105,10 +115,26 @@ void BFD3ME::progressChanged(QString progressStr, int progressDone, int progress
                                .arg(progressDone).arg(progressTodo));
 }
 
+void BFD3ME::error(QString path, QString errorStr) {
+    errors << QString("%0 (%1)").arg(errorStr).arg(path);
+}
+
+void BFD3ME::finished() {
+    if (errors.count() != 0) {
+        QString errStr = "Errors have occured:";
+        foreach (const QString &str, errors) {
+            errStr += QString("\n%0").arg(str);
+        }
+        QMessageBox::warning(this, "Errors occured", errStr);
+    }
+    loadThread.quit();
+}
+
 /*
  * This runs in a separate thread
  */
 void BFD3ME::load() {
+    errors.clear();
     disconnect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     if (_mode == Util::Database) {
         switch (_type) {

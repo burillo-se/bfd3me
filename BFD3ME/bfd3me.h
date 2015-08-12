@@ -42,6 +42,8 @@ private slots:
     void on_saveBtn_clicked();
     void load();
     void progressChanged(QString progressStr, int progressDone, int progressTodo);
+    void error(QString path, QString errorStr);
+    void finished();
 
 private:
     void setMode(Util::Mode mode);
@@ -68,6 +70,7 @@ private:
 
     QSortFilterProxyModel fmodel;
     QThread loadThread;
+    QStringList errors;
 };
 
 #endif // BFD3ME_H

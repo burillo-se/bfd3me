@@ -45,6 +45,8 @@ private slots:
     void error(QString path, QString errorStr);
     void finished();
 
+    void on_pathEdit_textChanged(const QString &arg1);
+
 private:
     void setMode(Util::Mode mode);
     void setType(Util::Type type);
@@ -52,6 +54,7 @@ private:
     void clearAll();
     void displayEdits();
     void setFilterStrings();
+    void setEnabledButtons();
     void setText(const QString &text, QLineEdit *l, bool first);
     Util::Mode _mode;
     Util::Type _type;

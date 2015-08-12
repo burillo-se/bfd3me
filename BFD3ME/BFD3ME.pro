@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     preset.cpp \
     util.cpp \
     window_boilerplate.cpp \
-    helperbase.cpp
+    helperbase.cpp \
+    window_signals.cpp
 
 HEADERS  += bfd3me.h \
     kit.h \

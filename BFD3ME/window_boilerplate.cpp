@@ -19,6 +19,11 @@
     ui->##x##Lbl->show();\
     } while (0)
 
+BFD3ME::~BFD3ME()
+{
+    delete ui;
+}
+
 void BFD3ME::clearAll() {
     ui->nameEdit->clear();
     ui->libnameEdit->clear();
@@ -97,5 +102,34 @@ void BFD3ME::on_type_preset_toggled(bool checked)
 {
     if (checked) {
         setType(Util::Preset);
+    }
+}
+
+void BFD3ME::setEnabledButtons() {
+    if (ui->pathEdit->text() != "") {
+        ui->loadBtn->setEnabled(true);
+        ui->saveBtn->setEnabled(true);
+        ui->restoreBtn->setEnabled(true);
+        if (_mode == Util::Database)
+            ui->deleteBtn->setEnabled(true);
+        else
+            ui->deleteBtn->setEnabled(false);
+    } else {
+        ui->loadBtn->setEnabled(false);
+        ui->saveBtn->setEnabled(false);
+        ui->restoreBtn->setEnabled(false);
+        ui->deleteBtn->setEnabled(false);
+    }
+}
+
+void BFD3ME::on_pathEdit_textChanged(const QString &)
+{
+    setEnabledButtons();
+}
+
+void BFD3ME::on_loadBtn_clicked()
+{
+    if (!loadThread.isRunning() && ui->pathEdit->text() != "") {
+        loadThread.start();
     }
 }

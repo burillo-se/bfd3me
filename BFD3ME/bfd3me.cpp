@@ -81,10 +81,8 @@ void BFD3ME::setMode(Util::Mode mode) {
     clearAll();
     if (_mode == Util::Database) {
         setDefaultDatabasePath();
-        ui->deleteBtn->setEnabled(true);
-    } else {
-        ui->deleteBtn->setEnabled(false);
     }
+    setEnabledButtons();
 }
 
 void BFD3ME::setType(Util::Type type) {
@@ -98,36 +96,12 @@ void BFD3ME::setType(Util::Type type) {
         setDefaultDatabasePath();
     }
     setFilterStrings();
-}
-
-BFD3ME::~BFD3ME()
-{
-    delete ui;
+    setEnabledButtons();
 }
 
 void BFD3ME::on_comboBox_currentIndexChanged(int index)
 {
     Util::FilterType filter_type = (Util::FilterType) index;
-}
-
-void BFD3ME::progressChanged(QString progressStr, int progressDone, int progressTodo) {
-    ui->statusBar->showMessage(QString("%0: %1/%2").arg(progressStr)
-                               .arg(progressDone).arg(progressTodo));
-}
-
-void BFD3ME::error(QString path, QString errorStr) {
-    errors << QString("%0 (%1)").arg(errorStr).arg(path);
-}
-
-void BFD3ME::finished() {
-    if (errors.count() != 0) {
-        QString errStr = "Errors have occured:";
-        foreach (const QString &str, errors) {
-            errStr += QString("\n%0").arg(str);
-        }
-        QMessageBox::warning(this, "Errors occured", errStr);
-    }
-    loadThread.quit();
 }
 
 /*
@@ -169,13 +143,6 @@ void BFD3ME::load() {
     }
     ui->itemlist->setModel(&fmodel);
     connect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-}
-
-void BFD3ME::on_loadBtn_clicked()
-{
-    if (!loadThread.isRunning() && ui->pathEdit->text() != "") {
-        loadThread.start();
-    }
 }
 
 void BFD3ME::setText(const QString &text, QLineEdit *l, bool first) {

@@ -17,8 +17,8 @@
 #include <QList>
 #include <QSharedPointer>
 
-#include "helperbase.h"
-#include "util.h"
+#include "helpers/helperbase.h"
+#include "utils/util.h"
 
 /*
  * Template class header

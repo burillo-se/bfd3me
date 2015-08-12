@@ -3,7 +3,7 @@
 
 #include <QDomElement>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * This is another contraption that i had to come with to support

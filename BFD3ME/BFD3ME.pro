@@ -14,27 +14,27 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         bfd3me.cpp \
-    kit.cpp \
-    kitpiece.cpp \
-    preset.cpp \
-    util.cpp \
+    items/kit.cpp \
+    items/kitpiece.cpp \
+    items/preset.cpp \
+    utils/util.cpp \
     window_boilerplate.cpp \
-    helperbase.cpp \
+    helpers/helperbase.cpp \
     window_signals.cpp \
     window_util.cpp \
-    item.cpp
+    items/item.cpp
 
 HEADERS  += bfd3me.h \
-    kit.h \
-    kitpiece.h \
-    preset.h \
-    util.h \
-    helper.h \
-    dbhelper.h \
-    boilerplate.h \
-    itemmodel.h \
-    helperbase.h \
-    filtermodel.h \
-    item.h
+    items/kit.h \
+    items/kitpiece.h \
+    items/preset.h \
+    utils/util.h \
+    helpers/helper.h \
+    helpers/dbhelper.h \
+    utils/boilerplate.h \
+    models/itemmodel.h \
+    helpers/helperbase.h \
+    models/filtermodel.h \
+    items/item.h
 
 FORMS    += bfd3me.ui

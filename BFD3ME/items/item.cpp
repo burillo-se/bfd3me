@@ -1,6 +1,6 @@
 #include "item.h"
 
-#include "util.h"
+#include "utils/util.h"
 
 Item::Item(QDomElement &node)
 {

@@ -4,7 +4,7 @@
 #include <QFile>
 #include <QDir>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * Get a QDomDocument given a file path

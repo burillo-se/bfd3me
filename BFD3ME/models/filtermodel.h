@@ -6,9 +6,9 @@
  */
 
 #include <QSortFilterProxyModel>
-#include "itemmodel.h"
-#include "util.h"
-#include "kitpiece.h"
+#include "models/itemmodel.h"
+#include "utils/util.h"
+#include "items/kitpiece.h"
 
 template <typename T>
 class FilterModel : public QSortFilterProxyModel

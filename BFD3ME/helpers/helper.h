@@ -24,8 +24,8 @@
 #include <QSharedPointer>
 #include <QQueue>
 
-#include "helperbase.h"
-#include "util.h"
+#include "helpers/helperbase.h"
+#include "utils/util.h"
 
 /*
  * Header

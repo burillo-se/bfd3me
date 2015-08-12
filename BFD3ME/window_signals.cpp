@@ -3,7 +3,7 @@
 
 #include <QMessageBox>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * Source file with custom window signals

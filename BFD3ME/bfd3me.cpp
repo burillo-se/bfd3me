@@ -5,7 +5,7 @@
 #include <QDir>
 #include <QMessageBox>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * Source file with main window functions (load/save/restore/delete)

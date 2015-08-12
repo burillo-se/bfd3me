@@ -7,14 +7,14 @@
 #include <QThread>
 #include <QObject>
 
-#include "util.h"
-#include "kit.h"
-#include "kitpiece.h"
-#include "preset.h"
-#include "helper.h"
-#include "dbhelper.h"
-#include "itemmodel.h"
-#include "filtermodel.h"
+#include "utils/util.h"
+#include "items/kit.h"
+#include "items/kitpiece.h"
+#include "items/preset.h"
+#include "helpers/helper.h"
+#include "helpers/dbhelper.h"
+#include "models/itemmodel.h"
+#include "models/filtermodel.h"
 
 namespace Ui {
 class BFD3ME;

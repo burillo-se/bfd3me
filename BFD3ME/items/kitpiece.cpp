@@ -1,6 +1,6 @@
-#include "kitpiece.h"
-#include "util.h"
-#include "boilerplate.h"
+#include "items/kitpiece.h"
+#include "utils/util.h"
+#include "utils/boilerplate.h"
 
 /*
  * Mostly boring boilerplate code, but class is a special case.

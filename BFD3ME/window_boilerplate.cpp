@@ -6,7 +6,7 @@
 #include <QFileDialog>
 #include <QDir>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * Source file with various boring boilerplate code

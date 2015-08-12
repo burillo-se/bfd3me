@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
-#include "util.h"
+#include "utils/util.h"
 
 /*
  * Source file with various utility functions for window class

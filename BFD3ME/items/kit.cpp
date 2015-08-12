@@ -1,7 +1,7 @@
-#include "kit.h"
-#include "util.h"
+#include "items/kit.h"
+#include "utils/util.h"
 
-#include "boilerplate.h"
+#include "utils/boilerplate.h"
 
 /*
  * More boilerplate code...

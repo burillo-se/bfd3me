@@ -1,24 +1,23 @@
-#ifndef PRESET_H
-#define PRESET_H
+#ifndef KIT_H
+#define KIT_H
 
 #include <QString>
 #include <QDomElement>
 
-#include "util.h"
 #include "item.h"
 
 /*
- * Again, boring...
+ * Class representing a Kit. Boring...
  */
 
-class Preset : public Item
+class Kit : public Item
 {
 private:
     QString _name;
     QString _libname;
     QString _libcode;
 public:
-    Preset(QDomElement &node);
+    Kit(QDomElement &node);
     void setName(const QString &val);
     QString getName() const;
     void setLibname(const QString &val);
@@ -29,4 +28,4 @@ public:
     void save(QDomElement &node) const;
 };
 
-#endif // PRESET_H
+#endif // KIT_H

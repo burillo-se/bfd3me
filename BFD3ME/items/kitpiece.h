@@ -4,7 +4,6 @@
 #include <QString>
 #include <QDomElement>
 
-#include "util.h"
 #include "item.h"
 
 /*

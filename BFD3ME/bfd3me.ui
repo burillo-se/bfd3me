@@ -240,13 +240,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0" rowspan="13" colspan="3">
-     <widget class="QListView" name="itemlist">
-      <property name="selectionMode">
-       <enum>QAbstractItemView::ExtendedSelection</enum>
-      </property>
-     </widget>
-    </item>
     <item row="12" column="3">
      <widget class="QLabel" name="dateLbl">
       <property name="text">
@@ -418,6 +411,19 @@
        </size>
       </property>
      </spacer>
+    </item>
+    <item row="4" column="0" rowspan="13" colspan="3">
+     <widget class="QTreeView" name="itemlist">
+      <property name="selectionMode">
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <attribute name="headerVisible">
+       <bool>false</bool>
+      </attribute>
+     </widget>
     </item>
    </layout>
   </widget>

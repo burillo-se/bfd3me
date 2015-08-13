@@ -13,10 +13,16 @@ class ItemModel : public QAbstractItemModel
 private:
     QList<QSharedPointer<T>> list;
 public:
-    int rowCount(const QModelIndex &) const { return list.count();}
+    int rowCount(const QModelIndex &index) const {
+        if (index == QModelIndex())
+            return list.count();
+        return 0;
+    }
     int columnCount(const QModelIndex &) const { return 1;}
-    QModelIndex index(int row, int column, const QModelIndex &) const {
-        return createIndex(row, column);
+    QModelIndex index(int row, int col, const QModelIndex &parent) const {
+        if (parent == QModelIndex())
+            return createIndex(row, col);
+        return QModelIndex();
     }
     QModelIndex parent(const QModelIndex &) const {
         return QModelIndex();

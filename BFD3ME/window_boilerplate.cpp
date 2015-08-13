@@ -131,14 +131,15 @@ void BFD3ME::on_loadBtn_clicked()
 
 void BFD3ME::on_selection_changed()
 {
-    QModelIndexList list = selection.selectedIndexes();
-    if (list.empty()) {
-        clearAll();
-        return;
-    }
+    QModelIndexList list;
     bool first = true;
     switch (_type) {
     case Util::Kit:
+        list = kselection.selectedIndexes();
+        if (list.empty()) {
+            clearAll();
+            return;
+        }
         foreach (QModelIndex i, list) {
             QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(i));
             setText(k->getName(), ui->nameEdit, first);
@@ -148,6 +149,11 @@ void BFD3ME::on_selection_changed()
         }
         break;
     case Util::Preset:
+        list = pselection.selectedIndexes();
+        if (list.empty()) {
+            clearAll();
+            return;
+        }
         foreach (QModelIndex i, list) {
             QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(i));
             setText(p->getName(), ui->nameEdit, first);
@@ -157,6 +163,11 @@ void BFD3ME::on_selection_changed()
         }
         break;
     case Util::Kitpiece:
+        list = kpselection.selectedIndexes();
+        if (list.empty()) {
+            clearAll();
+            return;
+        }
         foreach (QModelIndex i, list) {
             QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(i));
             setText(kp->getName(), ui->nameEdit, first);

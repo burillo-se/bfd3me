@@ -80,7 +80,9 @@ private:
     FilterModel<Kitpiece> kpfmodel;
     FilterModel<Preset> pfmodel;
 
-    SelectionModel selection;
+    SelectionModel<Kit> kselection;
+    SelectionModel<Kitpiece> kpselection;
+    SelectionModel<Preset> pselection;
 
     QThread loadThread;
     QStringList errors;

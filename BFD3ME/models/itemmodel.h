@@ -104,8 +104,9 @@ public:
     void setItem(QSharedPointer<T> newItem, QModelIndex index) {
         tree_data *ptr = (tree_data*) index.internalPointer();
         QList<QSharedPointer<T>> &list = child_map[ptr->str];
-        int idx = index.row();
-        list[idx] = newItem;
+        QSharedPointer<T> oldItem = list.at(index.row());
+        *oldItem = *newItem;
+
         emit dataChanged(index, index);
     }
 

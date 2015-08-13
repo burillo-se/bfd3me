@@ -67,8 +67,11 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
         if (role == Qt::DisplayRole) {
-            if (index.internalPointer() == 0)
+            if (index.internalPointer() == 0) {
+                if (p_list.at(index.row()).str == "")
+                    return "<Unknown>";
                 return p_list.at(index.row()).str;
+            }
             tree_data *ptr = (tree_data*) index.internalPointer();
             return child_map[ptr->str].at(index.row())->getName();
         }

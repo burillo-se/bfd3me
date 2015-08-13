@@ -414,11 +414,20 @@
     </item>
     <item row="4" column="0" rowspan="13" colspan="3">
      <widget class="QTreeView" name="itemlist">
+      <property name="showDropIndicator" stdset="0">
+       <bool>false</bool>
+      </property>
       <property name="selectionMode">
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>true</bool>
+      </property>
+      <property name="animated">
+       <bool>true</bool>
       </property>
       <attribute name="headerVisible">
        <bool>false</bool>

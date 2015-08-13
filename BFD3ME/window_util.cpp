@@ -79,34 +79,6 @@ void BFD3ME::setText(const QString &text, QLineEdit *l, bool first) {
     }
 }
 
-QList<int> BFD3ME::getIdxList() const {
-    QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
-    /*
-     * The moment we start updating our data, our selection indices may not be
-     * valid any more because they can be hidden by the filter. So save all the
-     * indices we are going to update.
-     */
-    QList<int> idxs;
-    switch(_type) {
-    case Util::Kitpiece:
-        foreach (QModelIndex i, list) {
-            idxs << kpfmodel.mapToSource(i).row();
-        }
-        break;
-    case Util::Kit:
-        foreach (QModelIndex i, list) {
-            idxs << kfmodel.mapToSource(i).row();
-        }
-        break;
-    case Util::Preset:
-        foreach (QModelIndex i, list) {
-            idxs << pfmodel.mapToSource(i).row();
-        }
-        break;
-    }
-    return idxs;
-}
-
 void BFD3ME::setFilterStrings() {
     QStringList filters;
     filters << "No filter" << "Name" << "Library name" << "Library code";

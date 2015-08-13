@@ -131,7 +131,7 @@ void BFD3ME::on_loadBtn_clicked()
 
 void BFD3ME::on_selection_changed()
 {
-    QModelIndexList list = ui->itemlist->selectionModel()->selectedIndexes();
+    QModelIndexList list = selection.selectedIndexes();
     if (list.empty()) {
         clearAll();
         return;
@@ -140,7 +140,7 @@ void BFD3ME::on_selection_changed()
     switch (_type) {
     case Util::Kit:
         foreach (QModelIndex i, list) {
-            QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(i).row());
+            QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(i));
             setText(k->getName(), ui->nameEdit, first);
             setText(k->getLibname(), ui->libnameEdit, first);
             setText(k->getLibcode(), ui->libcodeEdit, first);
@@ -149,7 +149,7 @@ void BFD3ME::on_selection_changed()
         break;
     case Util::Preset:
         foreach (QModelIndex i, list) {
-            QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(i).row());
+            QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(i));
             setText(p->getName(), ui->nameEdit, first);
             setText(p->getLibname(), ui->libnameEdit, first);
             setText(p->getLibcode(), ui->libcodeEdit, first);
@@ -158,7 +158,7 @@ void BFD3ME::on_selection_changed()
         break;
     case Util::Kitpiece:
         foreach (QModelIndex i, list) {
-            QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(i).row());
+            QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(i));
             setText(kp->getName(), ui->nameEdit, first);
             setText(kp->getLibname(), ui->libnameEdit, first);
             setText(kp->getLibcode(), ui->libcodeEdit, first);

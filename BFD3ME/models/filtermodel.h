@@ -16,8 +16,10 @@ class FilterModel : public QSortFilterProxyModel
 private:
     Util::FilterType filter_type;
 protected:
-    bool filterAcceptsRow(int source_row, const QModelIndex &) const;
-    bool filterAcceptsColumn(int , const QModelIndex &) const;
+    bool filterAcceptsRow(int source_row, const QModelIndex &parent) const;
+    bool filterAcceptsColumn(int , const QModelIndex &) const {
+        return true;
+    }
 public:
     void setFilterType(Util::FilterType type) {filter_type = type;}
 };
@@ -29,9 +31,13 @@ public:
  * so that they can be filtered anyway.
  */
 template <typename T>
-bool FilterModel<T>::filterAcceptsRow(int source_row, const QModelIndex &) const {
+bool FilterModel<T>::filterAcceptsRow(int source_row, const QModelIndex &parent) const {
     ItemModel<T>* model = (ItemModel<T>*) sourceModel();
-    QSharedPointer<T> i = model->getItem(source_row);
+
+    QModelIndex index = model->index(source_row, 0, parent);
+    if (index.internalPointer() == 0)
+        return true;
+    QSharedPointer<T> i = model->getItem(index);
     if (i.isNull())
         return false;
     i->setFilteredString(filter_type);
@@ -40,11 +46,6 @@ bool FilterModel<T>::filterAcceptsRow(int source_row, const QModelIndex &) const
     } else {
         return Util::matchesFilter(filterRegExp().pattern(), i->getFilteredString());
     }
-}
-
-template <typename T>
-bool FilterModel<T>::filterAcceptsColumn(int, const QModelIndex &) const {
-    return true;
 }
 
 

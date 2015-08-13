@@ -61,7 +61,6 @@ private:
     void setFilterStrings();
     void setEnabledButtons();
     void setText(const QString &text, QLineEdit *l, bool first);
-    QList<int> getIdxList() const;
     Util::Mode _mode;
     Util::Type _type;
     Ui::BFD3ME *ui;

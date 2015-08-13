@@ -62,7 +62,7 @@ BFD3ME::BFD3ME(QWidget *parent) :
  */
 void BFD3ME::load() {
     errors.clear();
-    disconnect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     switch (_type) {
     case Util::Kit:
         if (_mode == Util::Database)
@@ -70,8 +70,8 @@ void BFD3ME::load() {
         else
             kmodel.setList(kit_f.load(ui->pathEdit->text()));
         kfmodel.setSourceModel(&kmodel);
-        ui->itemlist->setModel(&kfmodel);
         selection.setModel(&kfmodel);
+        ui->itemlist->setModel(&kfmodel);
         ui->itemlist->setSelectionModel(&selection);
         kfmodel.invalidate();
         break;
@@ -81,8 +81,8 @@ void BFD3ME::load() {
         else
             kpmodel.setList(kitpiece_f.load(ui->pathEdit->text()));
         kpfmodel.setSourceModel(&kpmodel);
-        ui->itemlist->setModel(&kpfmodel);
         selection.setModel(&kpfmodel);
+        ui->itemlist->setModel(&kpfmodel);
         ui->itemlist->setSelectionModel(&selection);
         kpfmodel.invalidate();
         break;
@@ -92,13 +92,13 @@ void BFD3ME::load() {
         else
             pmodel.setList(preset_f.load(ui->pathEdit->text()));
         pfmodel.setSourceModel(&pmodel);
-        ui->itemlist->setModel(&pfmodel);
         selection.setModel(&pfmodel);
+        ui->itemlist->setModel(&pfmodel);
         ui->itemlist->setSelectionModel(&selection);
         pfmodel.invalidate();
         break;
     }
-    connect(ui->itemlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    connect(&selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
 }
 
 void BFD3ME::on_restoreBtn_clicked()
@@ -106,8 +106,6 @@ void BFD3ME::on_restoreBtn_clicked()
     // bail out if no data
     if (!ui->itemlist->model())
         return;
-
-    QList<int> idxs = getIdxList();
 
     // if database, we're restoring everything at once
     if (_mode == Util::Database) {
@@ -127,10 +125,11 @@ void BFD3ME::on_restoreBtn_clicked()
         }
     // otherwise, restore each selected file
     } else {
+        QModelIndexList idxs = selection.selectedIndexes();
         switch (_type) {
         case Util::Kit:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
                 kmodel.setItem(kit_f.restoreFromBackup(k), idx);
             }
@@ -138,7 +137,7 @@ void BFD3ME::on_restoreBtn_clicked()
             break;
         case Util::Preset:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Preset> p = pmodel.getItem(idx);
                 pmodel.setItem(preset_f.restoreFromBackup(p), idx);
             }
@@ -146,7 +145,7 @@ void BFD3ME::on_restoreBtn_clicked()
             break;
         case Util::Kitpiece:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 kpmodel.setItem(kitpiece_f.restoreFromBackup(kp), idx);
             }
@@ -154,7 +153,7 @@ void BFD3ME::on_restoreBtn_clicked()
             break;
         }
     }
-    ui->itemlist->selectionModel()->clearSelection();
+    selection.clearSelection();
 }
 
 void BFD3ME::on_deleteBtn_clicked()
@@ -163,14 +162,14 @@ void BFD3ME::on_deleteBtn_clicked()
     if (!ui->itemlist->model())
         return;
 
-    QList<int> idxs = getIdxList();
+    QModelIndexList idxs = selection.selectedIndexes();
 
     // we already know we're in database mode, so check type only
     switch (_type) {
     case Util::Kit:
         // we need to go from the end, otherwise it'll end in disaster
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            int idx = idxs[s_idx];
+            QModelIndex idx = idxs[s_idx];
             QSharedPointer<Kit> k = kmodel.getItem(idx);
             kmodel.removeItem(idx);
             kit_db.remove(k);
@@ -180,7 +179,7 @@ void BFD3ME::on_deleteBtn_clicked()
     case Util::Preset:
         // we need to go from the end, otherwise it'll end in disaster
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            int idx = idxs[s_idx];
+            QModelIndex idx = idxs[s_idx];
             QSharedPointer<Preset> p = pmodel.getItem(idx);
             pmodel.removeItem(idx);
             preset_db.remove(p);
@@ -190,7 +189,7 @@ void BFD3ME::on_deleteBtn_clicked()
     case Util::Kitpiece:
         // we need to go from the end, otherwise it'll end in disaster
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            int idx = idxs[s_idx];
+            QModelIndex idx = idxs[s_idx];
             QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
             kpmodel.removeItem(idx);
             kitpiece_db.remove(kp);
@@ -206,13 +205,13 @@ void BFD3ME::on_saveBtn_clicked()
     if (!ui->itemlist->model())
         return;
 
-    QList<int> idxs = getIdxList();
+    QModelIndexList idxs = selection.selectedIndexes();
 
     switch (_type) {
     case Util::Kitpiece:
         {
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     kp->setName(ui->nameEdit->text());
@@ -241,7 +240,7 @@ void BFD3ME::on_saveBtn_clicked()
     case Util::Kit:
         {
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     k->setName(ui->nameEdit->text());
@@ -256,7 +255,7 @@ void BFD3ME::on_saveBtn_clicked()
     case Util::Preset:
         {
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Preset> p = pmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     p->setName(ui->nameEdit->text());
@@ -288,7 +287,7 @@ void BFD3ME::on_saveBtn_clicked()
         switch (_type) {
         case Util::Kit:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
                 kit_f.save(k);
             }
@@ -296,7 +295,7 @@ void BFD3ME::on_saveBtn_clicked()
             break;
         case Util::Preset:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Preset> p = pmodel.getItem(idx);
                 preset_f.save(p);
             }
@@ -304,7 +303,7 @@ void BFD3ME::on_saveBtn_clicked()
             break;
         case Util::Kitpiece:
             for (int i = 0; i < idxs.count(); i++) {
-                int idx = idxs[i];
+                QModelIndex idx = idxs[i];
                 QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 kitpiece_f.save(kp);
             }
@@ -312,5 +311,5 @@ void BFD3ME::on_saveBtn_clicked()
             break;
         }
     }
-    ui->itemlist->selectionModel()->clearSelection();
+    selection.clearSelection();
 }

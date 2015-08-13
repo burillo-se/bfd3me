@@ -167,8 +167,10 @@ public:
     }
 
     void clearList() {
+        beginRemoveRows(QModelIndex(), 0, p_list.count());
         child_map.clear();
         p_list.clear();
+        endRemoveRows();
         emit dataChanged(createIndex(0, 0), createIndex(total_size, 0));
         total_size = 0;
     }

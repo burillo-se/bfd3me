@@ -111,6 +111,10 @@ void BFD3ME::on_restoreBtn_clicked()
     if (!ui->itemlist->model())
         return;
 
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+
     QModelIndexList idxs;
 
     // if database, we're restoring everything at once
@@ -138,8 +142,8 @@ void BFD3ME::on_restoreBtn_clicked()
         case Util::Kit:
             idxs = kselection.selectedIndexes();
             for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(idx));
+                QModelIndex idx = kfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Kit> k = kmodel.getItem(idx);
                 kmodel.setItem(kit_f.restoreFromBackup(k), idx);
             }
             kfmodel.invalidate();
@@ -148,8 +152,8 @@ void BFD3ME::on_restoreBtn_clicked()
         case Util::Preset:
             idxs = pselection.selectedIndexes();
             for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(idx));
+                QModelIndex idx = pfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Preset> p = pmodel.getItem(idx);
                 pmodel.setItem(preset_f.restoreFromBackup(p), idx);
             }
             pfmodel.invalidate();
@@ -158,8 +162,8 @@ void BFD3ME::on_restoreBtn_clicked()
         case Util::Kitpiece:
             idxs = kpselection.selectedIndexes();
             for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(idx));
+                QModelIndex idx = kpfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 kpmodel.setItem(kitpiece_f.restoreFromBackup(kp), idx);
             }
             kpfmodel.invalidate();
@@ -267,8 +271,8 @@ void BFD3ME::on_saveBtn_clicked()
                     kitpiece_f.save(kp);
                 }
                 kpmodel.setItem(kp, idx);
-                kpfmodel.invalidate();
             }
+            kpfmodel.invalidate();
             connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kpselection.clearSelection();
         }
@@ -289,8 +293,8 @@ void BFD3ME::on_saveBtn_clicked()
                     kit_f.save(k);
                 }
                 kmodel.setItem(k, idx);
-                kfmodel.invalidate();
             }
+            kfmodel.invalidate();
             connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kselection.clearSelection();
         }

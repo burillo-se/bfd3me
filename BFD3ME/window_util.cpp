@@ -29,6 +29,9 @@ void BFD3ME::setDefaultDatabasePath() {
 }
 
 void BFD3ME::clearData() {
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     kit_f.clear();
     kitpiece_f.clear();
     preset_f.clear();

@@ -129,50 +129,42 @@ void BFD3ME::on_loadBtn_clicked()
     }
 }
 
+
+#define SELECTION_START(x) \
+    list = ##x##selection.selectedIndexes(); \
+    if (list.empty()) { \
+        clearAll(); \
+        return; \
+    }
+#define SELECTION_BOILERPLATE(classname, x) \
+    QSharedPointer<(classname)> (x) = ##x##model.getItem(##x##fmodel.mapToSource(i)); \
+    setText((x)->getName(), ui->nameEdit, first); \
+    setText((x)->getLibname(), ui->libnameEdit, first); \
+    setText((x)->getLibcode(), ui->libcodeEdit, first);
+
+#define SELECTION_CHANGED(classname, x) \
+    SELECTION_START(x) \
+    foreach (QModelIndex i, list) { \
+        SELECTION_BOILERPLATE(classname, x) \
+        first = false; \
+    }
+
+
 void BFD3ME::on_selection_changed()
 {
     QModelIndexList list;
     bool first = true;
     switch (_type) {
     case Util::Kit:
-        list = kselection.selectedIndexes();
-        if (list.empty()) {
-            clearAll();
-            return;
-        }
-        foreach (QModelIndex i, list) {
-            QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(i));
-            setText(k->getName(), ui->nameEdit, first);
-            setText(k->getLibname(), ui->libnameEdit, first);
-            setText(k->getLibcode(), ui->libcodeEdit, first);
-            first = false;
-        }
+        SELECTION_CHANGED(Kit, k)
         break;
     case Util::Preset:
-        list = pselection.selectedIndexes();
-        if (list.empty()) {
-            clearAll();
-            return;
-        }
-        foreach (QModelIndex i, list) {
-            QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(i));
-            setText(p->getName(), ui->nameEdit, first);
-            setText(p->getLibname(), ui->libnameEdit, first);
-            setText(p->getLibcode(), ui->libcodeEdit, first);
-            first = false;
-        }
+        SELECTION_CHANGED(Preset, p)
         break;
     case Util::Kitpiece:
-        list = kpselection.selectedIndexes();
-        if (list.empty()) {
-            clearAll();
-            return;
-        }
+        SELECTION_START(kp)
         foreach (QModelIndex i, list) {
-            QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(i));
-            setText(kp->getName(), ui->nameEdit, first);
-            setText(kp->getLibname(), ui->libnameEdit, first);
-            setText(kp->getLibcode(), ui->libcodeEdit, first);
+            SELECTION_BOILERPLATE(Kitpiece, kp)
             setText(kp->getClass(), ui->classEdit, first);
             setText(kp->getSubclass(), ui->subclassEdit, first);
             setText(kp->getManufacturer(), ui->manufacturerEdit, first);
@@ -213,40 +205,42 @@ void BFD3ME::on_browseBtn_clicked()
     }
 }
 
+#define FILTER_BOILERPLATE(x) \
+    ##x##fmodel.setFilterType(filter_type); \
+    ##x##fmodel.invalidate();
+
 void BFD3ME::on_comboBox_currentIndexChanged(int index)
 {
     Util::FilterType filter_type = (Util::FilterType) index;
 
     switch (_type) {
     case Util::Kit:
-        kfmodel.setFilterType(filter_type);
-        kfmodel.invalidate();
+        FILTER_BOILERPLATE(k)
         break;
     case Util::Kitpiece:
-        kpfmodel.setFilterType(filter_type);
-        kpfmodel.invalidate();
+        FILTER_BOILERPLATE(kp)
         break;
     case Util::Preset:
-        pfmodel.setFilterType(filter_type);
-        pfmodel.invalidate();
+        FILTER_BOILERPLATE(p)
         break;
     }
 }
+
+#define TEXT_BOILERPLATE(x) \
+    ##x##fmodel.setFilterFixedString(arg1); \
+    ##x##fmodel.invalidate();
 
 void BFD3ME::on_lineEdit_textChanged(const QString &arg1)
 {
     switch (_type) {
     case Util::Kit:
-        kfmodel.setFilterFixedString(arg1);
-        kfmodel.invalidate();
+        TEXT_BOILERPLATE(k)
         break;
     case Util::Kitpiece:
-        kpfmodel.setFilterFixedString(arg1);
-        kpfmodel.invalidate();
+        TEXT_BOILERPLATE(kp)
         break;
     case Util::Preset:
-        pfmodel.setFilterFixedString(arg1);
-        pfmodel.invalidate();
+        TEXT_BOILERPLATE(kp)
         break;
     }
 }

@@ -148,6 +148,9 @@ public:
             endInsertRows();
             emit dataChanged(newIndex, newIndex);
         } else {
+            // replace old item with new item
+            QSharedPointer<T> oldItem = oldList.at(oldIndex.row());
+            *oldItem = *newItem;
             emit dataChanged(oldIndex, oldIndex);
         }
     }

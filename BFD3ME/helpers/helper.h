@@ -24,6 +24,8 @@
 #include <QSharedPointer>
 #include <QQueue>
 
+#include <QApplication>
+
 #include "helpers/helperbase.h"
 #include "utils/util.h"
 
@@ -189,6 +191,8 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
 
         _progressDone++;
         emit progressChanged("Parsing",_progressDone,_progressTodo);
+
+        qApp->processEvents();
 
         // if we found a strange XML document that we couldn't parse
         if (k.isNull()) {

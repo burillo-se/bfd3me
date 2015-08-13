@@ -176,43 +176,49 @@ void BFD3ME::on_deleteBtn_clicked()
         return;
 
     QModelIndexList idxs;
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
 
     // we already know we're in database mode, so check type only
     switch (_type) {
     case Util::Kit:
-        idxs = kselection.selectedIndexes();
         // we need to go from the end, otherwise it'll end in disaster
+        idxs = kselection.selectedIndexes();
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = idxs[s_idx];
-            QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(idx));
+            QModelIndex idx = kfmodel.mapToSource(idxs[s_idx]);
+            QSharedPointer<Kit> k = kmodel.getItem(idx);
             kmodel.removeItem(idx);
             kit_db.remove(k);
-            kfmodel.invalidate();
         }
+        kfmodel.invalidate();
+        connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
         kselection.clearSelection();
         break;
     case Util::Preset:
-        idxs = pselection.selectedIndexes();
         // we need to go from the end, otherwise it'll end in disaster
+        idxs = pselection.selectedIndexes();
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = idxs[s_idx];
-            QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(idx));
+            QModelIndex idx = pfmodel.mapToSource(idxs[s_idx]);
+            QSharedPointer<Preset> p = pmodel.getItem(idx);
             pmodel.removeItem(idx);
             preset_db.remove(p);
-            pfmodel.invalidate();
         }
+        pfmodel.invalidate();
+        connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
         pselection.clearSelection();
         break;
     case Util::Kitpiece:
-        idxs = kpselection.selectedIndexes();
         // we need to go from the end, otherwise it'll end in disaster
+        idxs = kpselection.selectedIndexes();
         for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = idxs[s_idx];
-            QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(idx));
+            QModelIndex idx = kpfmodel.mapToSource(idxs[s_idx]);
+            QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
             kpmodel.removeItem(idx);
             kitpiece_db.remove(kp);
-            kpfmodel.invalidate();
         }
+        kpfmodel.invalidate();
+        connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
         kpselection.clearSelection();
         break;
     }
@@ -226,13 +232,17 @@ void BFD3ME::on_saveBtn_clicked()
 
     QModelIndexList idxs;
 
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+
     switch (_type) {
     case Util::Kitpiece:
         {
             idxs = kpselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Kitpiece> kp = kpmodel.getItem(kpfmodel.mapToSource(idx));
+            for (int i = idxs.count() - 1; i >= 0; i--) {
+                QModelIndex idx = kpfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     kp->setName(ui->nameEdit->text());
                 if (ui->libcodeCheck->isChecked())
@@ -253,51 +263,57 @@ void BFD3ME::on_saveBtn_clicked()
                     kp->setDimensions(ui->dimensionsEdit->text());
                 if (ui->beaterCheck->isChecked())
                     kp->setBeater(ui->beaterEdit->text());
-                kpfmodel.invalidate();
                 if (_mode == Util::Files) {
                     kitpiece_f.save(kp);
                 }
+                kpmodel.setItem(kp, idx);
+                kpfmodel.invalidate();
             }
+            connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kpselection.clearSelection();
         }
         break;
     case Util::Kit:
         {
             idxs = kselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Kit> k = kmodel.getItem(kfmodel.mapToSource(idx));
+            for (int i = idxs.count() - 1; i >= 0; i--) {
+                QModelIndex idx = kfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Kit> k = kmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     k->setName(ui->nameEdit->text());
                 if (ui->libcodeCheck->isChecked())
                     k->setLibcode(ui->libcodeEdit->text());
                 if (ui->libnameCheck->isChecked())
                     k->setLibname(ui->libnameEdit->text());
-                kfmodel.invalidate();
                 if (_mode == Util::Files) {
                     kit_f.save(k);
                 }
+                kmodel.setItem(k, idx);
+                kfmodel.invalidate();
             }
+            connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kselection.clearSelection();
         }
         break;
     case Util::Preset:
         {
             idxs = pselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = idxs[i];
-                QSharedPointer<Preset> p = pmodel.getItem(pfmodel.mapToSource(idx));
+            for (int i = idxs.count() - 1; i >= 0; i--) {
+                QModelIndex idx = pfmodel.mapToSource(idxs[i]);
+                QSharedPointer<Preset> p = pmodel.getItem(idx);
                 if (ui->nameCheck->isChecked())
                     p->setName(ui->nameEdit->text());
                 if (ui->libcodeCheck->isChecked())
                     p->setLibcode(ui->libcodeEdit->text());
                 if (ui->libnameCheck->isChecked())
                     p->setLibname(ui->libnameEdit->text());
-                pfmodel.invalidate();
                 if (_mode == Util::Files) {
                     preset_f.save(p);
                 }
+                pmodel.setItem(p, idx);
             }
+            pfmodel.invalidate();
+            connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             pselection.clearSelection();
         }
         break;

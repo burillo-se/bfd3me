@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QSharedPointer>
 #include <QList>
+#include <QMutex>
 
 #include <QtDebug>
 
@@ -26,6 +27,7 @@ private:
     QList<tree_data> p_list;
     QMap<QString,QList<QSharedPointer<T>>> child_map;
     int total_size;
+    QMutex mutex;
 public:
     int rowCount(const QModelIndex &index) const {
         if (index == QModelIndex())
@@ -51,13 +53,14 @@ public:
         if (p.internalPointer() != 0) {
             return QModelIndex();
         }
-        return createIndex(row, col, (void*) &p_list[p.row()]);
+        QModelIndex result = createIndex(row, col, (void*) &p_list[p.row()]);
+        return result;
     }
 
     QModelIndex parent(const QModelIndex &child) const {
         if (child.internalPointer() != 0) {
             tree_data *ptr = (tree_data*) child.internalPointer();
-            createIndex(ptr->row_id, 0);
+            return createIndex(ptr->row_id, 0);
         }
         return QModelIndex();
     }
@@ -101,28 +104,67 @@ public:
         emit dataChanged(createIndex(0, 0), createIndex(count, 0));
     }
 
-    void setItem(QSharedPointer<T> newItem, QModelIndex index) {
-        tree_data *ptr = (tree_data*) index.internalPointer();
-        QList<QSharedPointer<T>> &list = child_map[ptr->str];
-        QSharedPointer<T> oldItem = list.at(index.row());
-        *oldItem = *newItem;
+    void setItem(QSharedPointer<T> newItem, QModelIndex oldIndex) {
+        tree_data *ptr = (tree_data*) oldIndex.internalPointer();
+        QList<QSharedPointer<T>> &oldList = child_map[ptr->str];
 
-        emit dataChanged(index, index);
+        QString oldname = ptr->str;
+        QString newname = newItem->getLibname();
+
+        if (oldname != newname) {
+            QModelIndex newIndex;
+            tree_data *new_ptr;
+            // if we don't have such a node, create it
+            if (!child_map.keys().contains(newname)) {
+                beginInsertRows(QModelIndex(), p_list.count(), p_list.count());
+                tree_data new_data = {p_list.count(), newname};
+                p_list.append(new_data);
+                new_ptr = &p_list.last();
+                endInsertRows();
+            } else {
+                // find row_id of the new node
+                foreach (const tree_data &d, p_list) {
+                    if (d.str == newname) {
+                        new_ptr = (tree_data*) &d;
+                        break;
+                    }
+                }
+            }
+            newIndex = index(new_ptr->row_id, 0, QModelIndex());
+
+            // remove item from old list
+            QList<QSharedPointer<T>> &newList = child_map[newname];
+            beginRemoveRows(oldIndex, oldIndex.row(), oldIndex.row());
+            oldList.removeAt(oldIndex.row());
+            endRemoveRows();
+            emit dataChanged(oldIndex, oldIndex);
+
+            // add item to new list
+            beginInsertRows(newIndex, newList.count(), newList.count());
+            newList.append(newItem);
+            endInsertRows();
+            emit dataChanged(newIndex, newIndex);
+        } else {
+            emit dataChanged(oldIndex, oldIndex);
+        }
     }
 
-    void removeItem(QModelIndex index) {
-        tree_data *ptr = (tree_data*) index.internalPointer();
+    void removeItem(QModelIndex parent) {
+        tree_data *ptr = (tree_data*) parent.internalPointer();
         QList<QSharedPointer<T>> &list = child_map[ptr->str];
-        int idx = index.row();
+        int idx = parent.row();
+        beginRemoveRows(parent, idx, idx);
         list.removeAt(idx);
         total_size--;
-        emit dataChanged(index, index);
+        endRemoveRows();
+        emit dataChanged(parent, parent);
     }
 
     void clearList() {
         child_map.clear();
         p_list.clear();
         emit dataChanged(createIndex(0, 0), createIndex(total_size, 0));
+        total_size = 0;
     }
 };
 

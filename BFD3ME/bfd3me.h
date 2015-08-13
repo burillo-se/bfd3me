@@ -15,6 +15,7 @@
 #include "helpers/dbhelper.h"
 #include "models/itemmodel.h"
 #include "models/filtermodel.h"
+#include "models/selectionmodel.h"
 
 namespace Ui {
 class BFD3ME;
@@ -79,6 +80,9 @@ private:
     FilterModel<Kit> kfmodel;
     FilterModel<Kitpiece> kpfmodel;
     FilterModel<Preset> pfmodel;
+
+    SelectionModel selection;
+
     QThread loadThread;
     QStringList errors;
 };

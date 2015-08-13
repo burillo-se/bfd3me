@@ -35,6 +35,7 @@ HEADERS  += bfd3me.h \
     models/itemmodel.h \
     helpers/helperbase.h \
     models/filtermodel.h \
-    items/item.h
+    items/item.h \
+    models/selectionmodel.h
 
 FORMS    += bfd3me.ui

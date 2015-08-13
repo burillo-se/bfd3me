@@ -71,6 +71,8 @@ void BFD3ME::load() {
             kmodel.setList(kit_f.load(ui->pathEdit->text()));
         kfmodel.setSourceModel(&kmodel);
         ui->itemlist->setModel(&kfmodel);
+        selection.setModel(&kfmodel);
+        ui->itemlist->setSelectionModel(&selection);
         kfmodel.invalidate();
         break;
     case Util::Kitpiece:
@@ -80,6 +82,8 @@ void BFD3ME::load() {
             kpmodel.setList(kitpiece_f.load(ui->pathEdit->text()));
         kpfmodel.setSourceModel(&kpmodel);
         ui->itemlist->setModel(&kpfmodel);
+        selection.setModel(&kpfmodel);
+        ui->itemlist->setSelectionModel(&selection);
         kpfmodel.invalidate();
         break;
     case Util::Preset:
@@ -89,6 +93,8 @@ void BFD3ME::load() {
             pmodel.setList(preset_f.load(ui->pathEdit->text()));
         pfmodel.setSourceModel(&pmodel);
         ui->itemlist->setModel(&pfmodel);
+        selection.setModel(&pfmodel);
+        ui->itemlist->setSelectionModel(&selection);
         pfmodel.invalidate();
         break;
     }

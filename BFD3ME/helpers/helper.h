@@ -161,7 +161,16 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
         emit progressChanged("Scanning", _progressDone,_progressTodo);
 
         foreach (QFileInfo fi, fileInfoList) {
+            /* ugly, ugly hack:
+             * Some kits have two metadata files: BFDInfo.xml and Info.xml,
+             * presumably a leftover from conversions.
+             * For now, we're hardcoding Helper to skip everything else if
+             * BFDInfo.xml was found in the folder. Maybe later i'll implement
+             * metadata hiding...
+             */
             file_fifo.push_back(fi.absoluteFilePath());
+            if (fi.fileName() == "BFDInfo.xml")
+                break;
         }
 
         // recurse into subdirectories

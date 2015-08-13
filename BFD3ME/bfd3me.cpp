@@ -187,6 +187,10 @@ void BFD3ME::on_deleteBtn_clicked()
     }
 }
 
+#define SAVE_PROPERTY(x, y, z) \
+    if (ui->##y##Check->isChecked()) \
+        (x)->set##z##(ui->##y##Edit->text());
+
 void BFD3ME::on_saveBtn_clicked()
 {
     // bail out if no data
@@ -206,26 +210,16 @@ void BFD3ME::on_saveBtn_clicked()
             for (int i = idxs.count() - 1; i >= 0; i--) {
                 QModelIndex idx = kpfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
-                if (ui->nameCheck->isChecked())
-                    kp->setName(ui->nameEdit->text());
-                if (ui->libcodeCheck->isChecked())
-                    kp->setLibcode(ui->libcodeEdit->text());
-                if (ui->libnameCheck->isChecked())
-                    kp->setLibname(ui->libnameEdit->text());
-                if (ui->classCheck->isChecked())
-                    kp->setClass(ui->classEdit->text());
-                if (ui->subclassCheck->isChecked())
-                    kp->setSubclass(ui->subclassEdit->text());
-                if (ui->manufacturerCheck->isChecked())
-                    kp->setManufacturer(ui->manufacturerEdit->text());
-                if (ui->modelCheck->isChecked())
-                    kp->setModel(ui->modelEdit->text());
-                if (ui->dateCheck->isChecked())
-                    kp->setDate(ui->dateEdit->text());
-                if (ui->dimensionsCheck->isChecked())
-                    kp->setDimensions(ui->dimensionsEdit->text());
-                if (ui->beaterCheck->isChecked())
-                    kp->setBeater(ui->beaterEdit->text());
+                SAVE_PROPERTY(kp, name, Name);
+                SAVE_PROPERTY(kp, libcode, Libcode);
+                SAVE_PROPERTY(kp, libname, Libname);
+                SAVE_PROPERTY(kp, class, Class);
+                SAVE_PROPERTY(kp, subclass, Subclass);
+                SAVE_PROPERTY(kp, manufacturer, Manufacturer);
+                SAVE_PROPERTY(kp, model, Model);
+                SAVE_PROPERTY(kp, date, Date);
+                SAVE_PROPERTY(kp, dimensions, Dimensions);
+                SAVE_PROPERTY(kp, beater, Beater);
                 if (_mode == Util::Files) {
                     kitpiece_f.save(kp);
                 }
@@ -242,12 +236,9 @@ void BFD3ME::on_saveBtn_clicked()
             for (int i = idxs.count() - 1; i >= 0; i--) {
                 QModelIndex idx = kfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
-                if (ui->nameCheck->isChecked())
-                    k->setName(ui->nameEdit->text());
-                if (ui->libcodeCheck->isChecked())
-                    k->setLibcode(ui->libcodeEdit->text());
-                if (ui->libnameCheck->isChecked())
-                    k->setLibname(ui->libnameEdit->text());
+                SAVE_PROPERTY(k, name, Name);
+                SAVE_PROPERTY(k, libcode, Libcode);
+                SAVE_PROPERTY(k, libname, Libname);
                 if (_mode == Util::Files) {
                     kit_f.save(k);
                 }
@@ -264,12 +255,9 @@ void BFD3ME::on_saveBtn_clicked()
             for (int i = idxs.count() - 1; i >= 0; i--) {
                 QModelIndex idx = pfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Preset> p = pmodel.getItem(idx);
-                if (ui->nameCheck->isChecked())
-                    p->setName(ui->nameEdit->text());
-                if (ui->libcodeCheck->isChecked())
-                    p->setLibcode(ui->libcodeEdit->text());
-                if (ui->libnameCheck->isChecked())
-                    p->setLibname(ui->libnameEdit->text());
+                SAVE_PROPERTY(p, name, Name);
+                SAVE_PROPERTY(p, libcode, Libcode);
+                SAVE_PROPERTY(p, libname, Libname);
                 if (_mode == Util::Files) {
                     preset_f.save(p);
                 }

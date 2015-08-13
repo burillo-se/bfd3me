@@ -8,12 +8,19 @@
 #include <QtDebug>
 
 template <typename T>
-class ItemModel : public QAbstractListModel
+class ItemModel : public QAbstractItemModel
 {
 private:
     QList<QSharedPointer<T>> list;
 public:
     int rowCount(const QModelIndex &) const { return list.count();}
+    int columnCount(const QModelIndex &) const { return 1;}
+    QModelIndex index(int row, int column, const QModelIndex &) const {
+        return createIndex(row, column);
+    }
+    QModelIndex parent(const QModelIndex &) const {
+        return QModelIndex();
+    }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const {
         if (role == Qt::DisplayRole) {
             return list.at(index.row())->getName();

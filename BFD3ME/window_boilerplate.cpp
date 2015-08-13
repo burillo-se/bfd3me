@@ -137,7 +137,7 @@ void BFD3ME::on_loadBtn_clicked()
         return; \
     }
 #define SELECTION_BOILERPLATE(classname, x) \
-    QSharedPointer<(classname)> (x) = ##x##model.getItem(##x##fmodel.mapToSource(i)); \
+    QSharedPointer<classname> (x) = ##x##model.getItem(##x##fmodel.mapToSource(i)); \
     setText((x)->getName(), ui->nameEdit, first); \
     setText((x)->getLibname(), ui->libnameEdit, first); \
     setText((x)->getLibcode(), ui->libcodeEdit, first);
@@ -206,8 +206,10 @@ void BFD3ME::on_browseBtn_clicked()
 }
 
 #define FILTER_BOILERPLATE(x) \
+    do { \
     ##x##fmodel.setFilterType(filter_type); \
-    ##x##fmodel.invalidate();
+    ##x##fmodel.invalidate(); \
+    } while (0);
 
 void BFD3ME::on_comboBox_currentIndexChanged(int index)
 {
@@ -227,8 +229,10 @@ void BFD3ME::on_comboBox_currentIndexChanged(int index)
 }
 
 #define TEXT_BOILERPLATE(x) \
+    do { \
     ##x##fmodel.setFilterFixedString(arg1); \
-    ##x##fmodel.invalidate();
+    ##x##fmodel.invalidate(); \
+    } while (0);
 
 void BFD3ME::on_lineEdit_textChanged(const QString &arg1)
 {

@@ -60,6 +60,19 @@ BFD3ME::BFD3ME(QWidget *parent) :
 /*
  * This runs in a separate thread
  */
+#define LOAD(x, y) \
+    if (_mode == Util::Database) {\
+        ##x##model.setList(##y##_db.load(ui->pathEdit->text())); \
+    } else {\
+        ##x##model.setList(##y##_f.load(ui->pathEdit->text())); \
+    } \
+    ##x##fmodel.setSourceModel(&##x##model); \
+    ##x##selection.setModel(&##x##fmodel); \
+    ui->itemlist->setModel(&##x##fmodel); \
+    ui->itemlist->setSelectionModel(&##x##selection); \
+    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    ##x##fmodel.invalidate();
+
 void BFD3ME::load() {
     disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
@@ -67,43 +80,33 @@ void BFD3ME::load() {
     errors.clear();
     switch (_type) {
     case Util::Kit:
-        if (_mode == Util::Database)
-            kmodel.setList(kit_db.load(ui->pathEdit->text()));
-        else
-            kmodel.setList(kit_f.load(ui->pathEdit->text()));
-        kfmodel.setSourceModel(&kmodel);
-        kselection.setModel(&kfmodel);
-        ui->itemlist->setModel(&kfmodel);
-        ui->itemlist->setSelectionModel(&kselection);
-        connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        kfmodel.invalidate();
+        LOAD(k, kit)
         break;
     case Util::Kitpiece:
-        if (_mode == Util::Database)
-            kpmodel.setList(kitpiece_db.load(ui->pathEdit->text()));
-        else
-            kpmodel.setList(kitpiece_f.load(ui->pathEdit->text()));
-        kpfmodel.setSourceModel(&kpmodel);
-        kpselection.setModel(&kpfmodel);
-        ui->itemlist->setModel(&kpfmodel);
-        ui->itemlist->setSelectionModel(&kpselection);
-        connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        kpfmodel.invalidate();
+        LOAD(kp, kitpiece)
         break;
     case Util::Preset:
-        if (_mode == Util::Database)
-            pmodel.setList(preset_db.load(ui->pathEdit->text()));
-        else
-            pmodel.setList(preset_f.load(ui->pathEdit->text()));
-        pfmodel.setSourceModel(&pmodel);
-        pselection.setModel(&pfmodel);
-        ui->itemlist->setModel(&pfmodel);
-        ui->itemlist->setSelectionModel(&pselection);
-        connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        pfmodel.invalidate();
+        LOAD(p, preset)
         break;
     }
 }
+
+#define RESTORE1(x,y) \
+    do { \
+    ##x##model.setList(##y##_db.restoreFromBackup()); \
+    ##x##fmodel.invalidate(); \
+    ##x##selection.clearSelection(); \
+    } while (0);
+
+#define RESTORE2(x,y,z) \
+    idxs = ##x##selection.selectedIndexes(); \
+    for (int i = 0; i < idxs.count(); i++) { \
+        QModelIndex idx = ##x##fmodel.mapToSource(idxs[i]); \
+        QSharedPointer<z> (x) = ##x##model.getItem(idx); \
+        ##x##model.setItem(##y##_f.restoreFromBackup((x)), idx); \
+    } \
+    ##x##fmodel.invalidate(); \
+    ##x##selection.clearSelection();
 
 void BFD3ME::on_restoreBtn_clicked()
 {
@@ -121,57 +124,43 @@ void BFD3ME::on_restoreBtn_clicked()
     if (_mode == Util::Database) {
         switch (_type) {
         case Util::Kit:
-            kmodel.setList(kit_db.restoreFromBackup());
-            kfmodel.invalidate();
-            kselection.clearSelection();
+            RESTORE1(k, kit)
             break;
         case Util::Kitpiece:
-            kpmodel.setList(kitpiece_db.restoreFromBackup());
-            kpfmodel.invalidate();
-            kpselection.clearSelection();
+            RESTORE1(kp, kitpiece)
             break;
         case Util::Preset:
-            pmodel.setList(preset_db.restoreFromBackup());
-            pfmodel.invalidate();
-            pselection.clearSelection();
+            RESTORE1(p, preset)
             break;
         }
     // otherwise, restore each selected file
     } else {
         switch (_type) {
         case Util::Kit:
-            idxs = kselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = kfmodel.mapToSource(idxs[i]);
-                QSharedPointer<Kit> k = kmodel.getItem(idx);
-                kmodel.setItem(kit_f.restoreFromBackup(k), idx);
-            }
-            kfmodel.invalidate();
-            kselection.clearSelection();
+            RESTORE2(k, kit, Kit)
             break;
         case Util::Preset:
-            idxs = pselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = pfmodel.mapToSource(idxs[i]);
-                QSharedPointer<Preset> p = pmodel.getItem(idx);
-                pmodel.setItem(preset_f.restoreFromBackup(p), idx);
-            }
-            pfmodel.invalidate();
-            pselection.clearSelection();
+            RESTORE2(p, preset, Preset)
             break;
         case Util::Kitpiece:
-            idxs = kpselection.selectedIndexes();
-            for (int i = 0; i < idxs.count(); i++) {
-                QModelIndex idx = kpfmodel.mapToSource(idxs[i]);
-                QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
-                kpmodel.setItem(kitpiece_f.restoreFromBackup(kp), idx);
-            }
-            kpfmodel.invalidate();
-            kpselection.clearSelection();
+            RESTORE2(kp, kitpiece, Kitpiece)
             break;
         }
     }
 }
+
+// we need to go from the end, otherwise it'll end in disaster
+#define DELETE(x, y, z) \
+    idxs = ##x##selection.selectedIndexes(); \
+    for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) { \
+        QModelIndex idx = ##x##fmodel.mapToSource(idxs[s_idx]); \
+        QSharedPointer<z> (x) = ##x##model.getItem(idx); \
+        ##x##model.removeItem(idx); \
+        ##y##_db.remove((x)); \
+    } \
+    ##x##fmodel.invalidate(); \
+    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    ##x##selection.clearSelection();
 
 void BFD3ME::on_deleteBtn_clicked()
 {
@@ -187,43 +176,13 @@ void BFD3ME::on_deleteBtn_clicked()
     // we already know we're in database mode, so check type only
     switch (_type) {
     case Util::Kit:
-        // we need to go from the end, otherwise it'll end in disaster
-        idxs = kselection.selectedIndexes();
-        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = kfmodel.mapToSource(idxs[s_idx]);
-            QSharedPointer<Kit> k = kmodel.getItem(idx);
-            kmodel.removeItem(idx);
-            kit_db.remove(k);
-        }
-        kfmodel.invalidate();
-        connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        kselection.clearSelection();
+        DELETE(k, kit, Kit)
         break;
     case Util::Preset:
-        // we need to go from the end, otherwise it'll end in disaster
-        idxs = pselection.selectedIndexes();
-        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = pfmodel.mapToSource(idxs[s_idx]);
-            QSharedPointer<Preset> p = pmodel.getItem(idx);
-            pmodel.removeItem(idx);
-            preset_db.remove(p);
-        }
-        pfmodel.invalidate();
-        connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        pselection.clearSelection();
+        DELETE(p, preset, Preset)
         break;
     case Util::Kitpiece:
-        // we need to go from the end, otherwise it'll end in disaster
-        idxs = kpselection.selectedIndexes();
-        for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) {
-            QModelIndex idx = kpfmodel.mapToSource(idxs[s_idx]);
-            QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
-            kpmodel.removeItem(idx);
-            kitpiece_db.remove(kp);
-        }
-        kpfmodel.invalidate();
-        connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-        kpselection.clearSelection();
+        DELETE(kp, kitpiece, Kitpiece)
         break;
     }
 }

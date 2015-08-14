@@ -57,7 +57,7 @@ private slots:
     void on_type_kit_toggled(bool checked);
     void on_type_preset_toggled(bool checked);
     void on_comboBox_currentIndexChanged(int index);
-    void on_selection_changed();
+    void selected();
     void on_browseBtn_clicked();
     void on_deleteBtn_clicked();
     void save();

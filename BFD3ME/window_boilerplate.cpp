@@ -177,7 +177,7 @@ void BFD3ME::on_pathEdit_textChanged(const QString &)
     }
 
 
-void BFD3ME::on_selection_changed()
+void BFD3ME::selected()
 {
     QModelIndexList list;
     bool first = true;

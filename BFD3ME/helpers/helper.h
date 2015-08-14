@@ -210,12 +210,12 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
         QString path = file_fifo.front();
         file_fifo.pop_front();
 
+        qApp->processEvents();
+
         QSharedPointer<T> k = loadOne(path);
 
         _progressDone++;
         emit progressChanged("Parsing",_progressDone,_progressTodo);
-
-        qApp->processEvents();
 
         // if we found a strange XML document that we couldn't parse
         if (k.isNull()) {

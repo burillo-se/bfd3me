@@ -108,9 +108,9 @@ void BFD3ME::load() {
         loadThread.quit();
         return;
     }
-    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
     errors.clear();
     switch (_type) {
     case Util::Kit:
@@ -153,9 +153,9 @@ void BFD3ME::restore()
         return;
     }
 
-    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
 
     QModelIndexList idxs;
 
@@ -210,9 +210,9 @@ void BFD3ME::on_deleteBtn_clicked()
         return;
 
     QModelIndexList idxs;
-    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
 
     // we already know we're in database mode, so check type only
     switch (_type) {
@@ -242,9 +242,9 @@ void BFD3ME::save()
 
     QModelIndexList idxs;
 
-    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
-    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+    disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
+    disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
 
     switch (_type) {
     case Util::Kitpiece:
@@ -270,7 +270,7 @@ void BFD3ME::save()
                 kpmodel.setItem(kp, idx);
             }
             kpfmodel.invalidate();
-            connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+            connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
             kpselection.clearSelection();
         }
         break;
@@ -290,7 +290,7 @@ void BFD3ME::save()
                 kmodel.setItem(k, idx);
             }
             kfmodel.invalidate();
-            connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+            connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
             kselection.clearSelection();
         }
         break;
@@ -310,7 +310,7 @@ void BFD3ME::save()
                 pmodel.setItem(p, idx);
             }
             pfmodel.invalidate();
-            connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+            connect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected()));
             pselection.clearSelection();
         }
         break;

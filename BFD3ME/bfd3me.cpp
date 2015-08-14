@@ -192,7 +192,6 @@ void BFD3ME::restore()
 #define DELETE(x, y, z) \
     idxs = ##x##selection.selectedIndexes(); \
     for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) { \
-        progressChanged("Deleting", idxs.count() - s_idx, idxs.count()); \
         QModelIndex idx = ##x##fmodel.mapToSource(idxs[s_idx]); \
         QSharedPointer<z> (x) = ##x##model.getItem(idx); \
         ##x##model.removeItem(idx); \

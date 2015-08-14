@@ -25,6 +25,8 @@
 #include <QFile>
 #include <QDir>
 
+#include <QtDebug>
+
 #include "utils/util.h"
 
 /*
@@ -66,7 +68,10 @@ void HelperBase::saveDoc(const QDomDocument &doc, const QString &path) {
 }
 
 void HelperBase::restoreFile(const QString &path) {
+    qDebug() << path;
     QString bkp_path = Util::getLastBackupPath(path);
+
+    qDebug() << bkp_path;
 
     // replace with backup
     if (bkp_path != path) {

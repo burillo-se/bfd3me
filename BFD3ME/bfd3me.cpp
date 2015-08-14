@@ -121,7 +121,7 @@ void BFD3ME::load() {
 
 #define RESTORE_F(x,y,z) \
     idxs = ##x##selection.selectedIndexes(); \
-    for (int i = 0; i < idxs.count(); i++) { \
+    for (int i = idxs.count() - 1; i >= 0; i--) { \
         QModelIndex idx = ##x##fmodel.mapToSource(idxs[i]); \
         QSharedPointer<z> (x) = ##x##model.getItem(idx); \
         ##x##model.setItem(##y##_f.restoreFromBackup((x)), idx); \

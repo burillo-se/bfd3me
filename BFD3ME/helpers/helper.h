@@ -45,6 +45,8 @@
 #include <QSharedPointer>
 #include <QQueue>
 
+#include <QtDebug>
+
 #include <QApplication>
 
 #include "helpers/helperbase.h"

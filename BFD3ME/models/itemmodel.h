@@ -168,8 +168,7 @@ public:
             emit dataChanged(newIndex, newIndex);
         } else {
             // replace old item with new item
-            QSharedPointer<T> oldItem = oldList.at(oldIndex.row());
-            *oldItem = *newItem;
+            oldList.replace(oldIndex.row(), newItem);
             emit dataChanged(oldIndex, oldIndex);
         }
     }

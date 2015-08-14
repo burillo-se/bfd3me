@@ -56,7 +56,7 @@ void BFD3ME::on_actionAbout_triggered() {
                        "Copyright (C) Anatoly Burakov, 2015\n\n"
                        "BFD and FXpansion are trademarks of FXpansion Audio UK Ltd.\n\n"
                        "Usage of this program is not endorsed or supported by FXpansion in any way.\n\n"
-                       "This program is Free Software licensed under GPLv3.");
+                       "This program is Free Software licensed under GPLv3 or later.");
 }
 
 void BFD3ME::on_actionAbout_Qt_triggered() {

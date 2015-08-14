@@ -35,6 +35,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\Burillo\Documents\GitHub\bfd3me\build-BFD3ME-Desktop_Qt_5_5_0_MSVC2010_32bit-Release\release\BFD3ME.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\Burillo\Documents\GitHub\bfd3me\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\BFD3ME\vc_red.cab"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
 Source: "D:\BFD3ME\vc_red.msi"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
 Source: "D:\BFD3ME\platforms\qwindows.dll"; DestDir: "{app}\platforms\"; Flags: ignoreversion

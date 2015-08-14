@@ -128,6 +128,7 @@ void BFD3ME::load() {
 #define RESTORE_DB(x,y) \
     do { \
     ##x##model.setList(##y##_db.restoreFromBackup()); \
+    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
     ##x##fmodel.invalidate(); \
     ##x##selection.clearSelection(); \
     } while (0);
@@ -140,6 +141,7 @@ void BFD3ME::load() {
         QSharedPointer<z> (x) = ##x##model.getItem(idx); \
         ##x##model.setItem(##y##_f.restoreFromBackup((x)), idx); \
     } \
+    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
     ##x##fmodel.invalidate(); \
     ##x##selection.clearSelection();
 
@@ -268,7 +270,7 @@ void BFD3ME::save()
                 kpmodel.setItem(kp, idx);
             }
             kpfmodel.invalidate();
-            connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+            connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kpselection.clearSelection();
         }
         break;
@@ -288,7 +290,7 @@ void BFD3ME::save()
                 kmodel.setItem(k, idx);
             }
             kfmodel.invalidate();
-            connect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
+            connect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
             kselection.clearSelection();
         }
         break;

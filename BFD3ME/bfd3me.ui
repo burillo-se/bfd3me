@@ -437,6 +437,41 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About...</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
@@ -448,12 +483,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>581</x>
-     <y>69</y>
+     <x>790</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
-     <x>533</x>
-     <y>70</y>
+     <x>771</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -464,12 +499,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>584</x>
-     <y>97</y>
+     <x>790</x>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
-     <x>561</x>
-     <y>98</y>
+     <x>771</x>
+     <y>225</y>
     </hint>
    </hints>
   </connection>
@@ -480,12 +515,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>130</y>
+     <x>790</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
-     <x>559</x>
-     <y>128</y>
+     <x>771</x>
+     <y>251</y>
     </hint>
    </hints>
   </connection>
@@ -496,12 +531,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>154</y>
+     <x>790</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
-     <x>557</x>
-     <y>156</y>
+     <x>771</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
@@ -512,12 +547,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>587</x>
-     <y>192</y>
+     <x>790</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel">
-     <x>568</x>
-     <y>193</y>
+     <x>771</x>
+     <y>303</y>
     </hint>
    </hints>
   </connection>
@@ -528,12 +563,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>585</x>
-     <y>223</y>
+     <x>790</x>
+     <y>325</y>
     </hint>
     <hint type="destinationlabel">
-     <x>553</x>
-     <y>217</y>
+     <x>771</x>
+     <y>329</y>
     </hint>
    </hints>
   </connection>
@@ -544,12 +579,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>583</x>
-     <y>249</y>
+     <x>790</x>
+     <y>351</y>
     </hint>
     <hint type="destinationlabel">
-     <x>556</x>
-     <y>254</y>
+     <x>771</x>
+     <y>355</y>
     </hint>
    </hints>
   </connection>
@@ -560,12 +595,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>582</x>
-     <y>279</y>
+     <x>790</x>
+     <y>377</y>
     </hint>
     <hint type="destinationlabel">
-     <x>560</x>
-     <y>277</y>
+     <x>771</x>
+     <y>381</y>
     </hint>
    </hints>
   </connection>
@@ -576,12 +611,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>583</x>
-     <y>310</y>
+     <x>790</x>
+     <y>403</y>
     </hint>
     <hint type="destinationlabel">
-     <x>549</x>
-     <y>305</y>
+     <x>771</x>
+     <y>407</y>
     </hint>
    </hints>
   </connection>
@@ -592,12 +627,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>586</x>
-     <y>342</y>
+     <x>790</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
-     <x>563</x>
-     <y>341</y>
+     <x>771</x>
+     <y>433</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>BFD3ME</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>249</y>
     </hint>
    </hints>
   </connection>

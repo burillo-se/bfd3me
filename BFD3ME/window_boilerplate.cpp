@@ -3,6 +3,7 @@
 
 #include <QStandardPaths>
 #include <QFileInfo>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QDir>
 
@@ -27,6 +28,18 @@
 BFD3ME::~BFD3ME()
 {
     delete ui;
+}
+
+void BFD3ME::on_actionAbout_triggered() {
+    QMessageBox::about(this, "About BFD3 Metadata Editor",
+                       "Copyright (C) Anatoly Burakov, 2015\n\n"
+                       "BFD and FXpansion are trademarks of FXpansion Audio UK Ltd.\n\n"
+                       "Usage of this program is not endorsed or supported by FXpansion in any way.\n\n"
+                       "This program is Free Software licensed under GPLv3.");
+}
+
+void BFD3ME::on_actionAbout_Qt_triggered() {
+    QMessageBox::aboutQt(this, "Qt");
 }
 
 void BFD3ME::clearAll() {

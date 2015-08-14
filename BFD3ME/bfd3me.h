@@ -42,6 +42,8 @@ private slots:
     void on_restoreBtn_clicked();
     void on_deleteBtn_clicked();
     void on_saveBtn_clicked();
+    void on_actionAbout_triggered();
+    void on_actionAbout_Qt_triggered();
     void load();
     void progressChanged(QString progressStr, int progressDone, int progressTodo);
     void error(QString path, QString errorStr);

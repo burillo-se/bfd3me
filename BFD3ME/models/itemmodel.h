@@ -26,7 +26,6 @@ private:
 
     QList<tree_data> p_list;
     QMap<QString,QList<QSharedPointer<T>>> child_map;
-    int total_size;
     QMutex mutex;
 public:
     int rowCount(const QModelIndex &index) const {
@@ -95,7 +94,6 @@ public:
         for (int i = 0; i < newList.count(); i++) {
             child_map[newList[i]->getLibname()].append(newList[i]);
         }
-        total_size = count;
 
         // sort the library names
         QStringList parent_list = child_map.keys();
@@ -161,18 +159,17 @@ public:
         int idx = parent.row();
         beginRemoveRows(parent, idx, idx);
         list.removeAt(idx);
-        total_size--;
         endRemoveRows();
         emit dataChanged(parent, parent);
     }
 
     void clearList() {
-        beginRemoveRows(QModelIndex(), 0, p_list.count());
+        int count = p_list.count();
+        beginRemoveRows(QModelIndex(), 0, count);
         child_map.clear();
         p_list.clear();
         endRemoveRows();
-        emit dataChanged(createIndex(0, 0), createIndex(total_size, 0));
-        total_size = 0;
+        emit dataChanged(createIndex(0, 0), createIndex(count, 0));
     }
 };
 

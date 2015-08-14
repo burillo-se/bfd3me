@@ -91,14 +91,14 @@ void BFD3ME::load() {
     }
 }
 
-#define RESTORE1(x,y) \
+#define RESTORE_DB(x,y) \
     do { \
     ##x##model.setList(##y##_db.restoreFromBackup()); \
     ##x##fmodel.invalidate(); \
     ##x##selection.clearSelection(); \
     } while (0);
 
-#define RESTORE2(x,y,z) \
+#define RESTORE_F(x,y,z) \
     idxs = ##x##selection.selectedIndexes(); \
     for (int i = 0; i < idxs.count(); i++) { \
         QModelIndex idx = ##x##fmodel.mapToSource(idxs[i]); \
@@ -124,26 +124,26 @@ void BFD3ME::on_restoreBtn_clicked()
     if (_mode == Util::Database) {
         switch (_type) {
         case Util::Kit:
-            RESTORE1(k, kit)
+            RESTORE_DB(k, kit)
             break;
         case Util::Kitpiece:
-            RESTORE1(kp, kitpiece)
+            RESTORE_DB(kp, kitpiece)
             break;
         case Util::Preset:
-            RESTORE1(p, preset)
+            RESTORE_DB(p, preset)
             break;
         }
     // otherwise, restore each selected file
     } else {
         switch (_type) {
         case Util::Kit:
-            RESTORE2(k, kit, Kit)
+            RESTORE_F(k, kit, Kit)
             break;
         case Util::Preset:
-            RESTORE2(p, preset, Preset)
+            RESTORE_F(p, preset, Preset)
             break;
         case Util::Kitpiece:
-            RESTORE2(kp, kitpiece, Kitpiece)
+            RESTORE_F(kp, kitpiece, Kitpiece)
             break;
         }
     }

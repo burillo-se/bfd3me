@@ -39,10 +39,3 @@ HEADERS  += bfd3me.h \
     models/selectionmodel.h
 
 FORMS    += bfd3me.ui
-CONFIG += static
-static {
-    CONFIG += static
-
-    DEFINES += STATIC
-    message("Static build.")
-}

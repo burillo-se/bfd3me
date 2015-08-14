@@ -47,8 +47,17 @@ BFD3ME::BFD3ME(QWidget *parent) :
     setType(Util::Kitpiece);
 
     // set up thread signals
+    connect(ui->loadBtn, SIGNAL(pressed()), &loadThread, SLOT(start()));
     connect(&loadThread, SIGNAL(started()), this, SLOT(load()));
     connect(&loadThread, SIGNAL(finished()), ui->statusBar, SLOT(clearMessage()));
+
+    connect(ui->saveBtn, SIGNAL(pressed()), &saveThread, SLOT(start()));
+    connect(&saveThread, SIGNAL(started()), this, SLOT(save()));
+    connect(&saveThread, SIGNAL(finished()), ui->statusBar, SLOT(clearMessage()));
+
+    connect(ui->restoreBtn, SIGNAL(pressed()), &restoreThread, SLOT(start()));
+    connect(&restoreThread, SIGNAL(started()), this, SLOT(restore()));
+    connect(&restoreThread, SIGNAL(finished()), ui->statusBar, SLOT(clearMessage()));
 
     // set up Helper signals to communicate with the thread
     connect(&kit_f, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
@@ -95,6 +104,10 @@ BFD3ME::BFD3ME(QWidget *parent) :
     ##x##fmodel.invalidate();
 
 void BFD3ME::load() {
+    if (ui->pathEdit->text().isEmpty()) {
+        loadThread.quit();
+        return;
+    }
     disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
@@ -122,6 +135,7 @@ void BFD3ME::load() {
 #define RESTORE_F(x,y,z) \
     idxs = ##x##selection.selectedIndexes(); \
     for (int i = idxs.count() - 1; i >= 0; i--) { \
+        progressChanged("Restoring", idxs.count() - i, idxs.count()); \
         QModelIndex idx = ##x##fmodel.mapToSource(idxs[i]); \
         QSharedPointer<z> (x) = ##x##model.getItem(idx); \
         ##x##model.setItem(##y##_f.restoreFromBackup((x)), idx); \
@@ -129,17 +143,20 @@ void BFD3ME::load() {
     ##x##fmodel.invalidate(); \
     ##x##selection.clearSelection();
 
-void BFD3ME::on_restoreBtn_clicked()
+void BFD3ME::restore()
 {
     // bail out if no data
-    if (!ui->itemlist->model())
+    if (!ui->itemlist->model()) {
+        restoreThread.quit();
         return;
+    }
 
     disconnect(&kselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     disconnect(&kpselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
     disconnect(&pselection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed()));
 
     QModelIndexList idxs;
+
 
     // if database, we're restoring everything at once
     if (_mode == Util::Database) {
@@ -168,12 +185,14 @@ void BFD3ME::on_restoreBtn_clicked()
             break;
         }
     }
+    restoreThread.quit();
 }
 
 // we need to go from the end, otherwise it'll end in disaster
 #define DELETE(x, y, z) \
     idxs = ##x##selection.selectedIndexes(); \
     for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) { \
+        progressChanged("Deleting", idxs.count() - s_idx, idxs.count()); \
         QModelIndex idx = ##x##fmodel.mapToSource(idxs[s_idx]); \
         QSharedPointer<z> (x) = ##x##model.getItem(idx); \
         ##x##model.removeItem(idx); \
@@ -212,11 +231,13 @@ void BFD3ME::on_deleteBtn_clicked()
     if (ui->##y##Check->isChecked()) \
         (x)->set##z##(ui->##y##Edit->text());
 
-void BFD3ME::on_saveBtn_clicked()
+void BFD3ME::save()
 {
     // bail out if no data
-    if (!ui->itemlist->model())
+    if (!ui->itemlist->model()) {
+        saveThread.quit();
         return;
+    }
 
     QModelIndexList idxs;
 
@@ -229,6 +250,7 @@ void BFD3ME::on_saveBtn_clicked()
         {
             idxs = kpselection.selectedIndexes();
             for (int i = idxs.count() - 1; i >= 0; i--) {
+                progressChanged("Saving", idxs.count() - i, idxs.count());
                 QModelIndex idx = kpfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Kitpiece> kp = kpmodel.getItem(idx);
                 SAVE_PROPERTY(kp, name, Name);
@@ -255,6 +277,7 @@ void BFD3ME::on_saveBtn_clicked()
         {
             idxs = kselection.selectedIndexes();
             for (int i = idxs.count() - 1; i >= 0; i--) {
+                progressChanged("Saving", idxs.count() - i, idxs.count());
                 QModelIndex idx = kfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Kit> k = kmodel.getItem(idx);
                 SAVE_PROPERTY(k, name, Name);
@@ -274,6 +297,7 @@ void BFD3ME::on_saveBtn_clicked()
         {
             idxs = pselection.selectedIndexes();
             for (int i = idxs.count() - 1; i >= 0; i--) {
+                progressChanged("Saving", idxs.count() - i, idxs.count());
                 QModelIndex idx = pfmodel.mapToSource(idxs[i]);
                 QSharedPointer<Preset> p = pmodel.getItem(idx);
                 SAVE_PROPERTY(p, name, Name);
@@ -305,4 +329,5 @@ void BFD3ME::on_saveBtn_clicked()
             break;
         }
     }
+    saveThread.quit();
 }

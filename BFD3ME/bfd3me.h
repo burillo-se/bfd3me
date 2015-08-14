@@ -57,12 +57,11 @@ private slots:
     void on_type_kit_toggled(bool checked);
     void on_type_preset_toggled(bool checked);
     void on_comboBox_currentIndexChanged(int index);
-    void on_loadBtn_clicked();
     void on_selection_changed();
     void on_browseBtn_clicked();
-    void on_restoreBtn_clicked();
     void on_deleteBtn_clicked();
-    void on_saveBtn_clicked();
+    void save();
+    void restore();
     void on_actionAbout_triggered();
     void on_actionAbout_Qt_triggered();
     void load();
@@ -108,6 +107,8 @@ private:
     SelectionModel<Preset> pselection;
 
     QThread loadThread;
+    QThread saveThread;
+    QThread restoreThread;
     QStringList errors;
 };
 

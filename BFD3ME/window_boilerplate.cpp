@@ -156,13 +156,6 @@ void BFD3ME::on_pathEdit_textChanged(const QString &)
     setEnabledButtons();
 }
 
-void BFD3ME::on_loadBtn_clicked()
-{
-    if (!loadThread.isRunning() && ui->pathEdit->text() != "") {
-        loadThread.start();
-    }
-}
-
 
 #define SELECTION_START(x) \
     list = ##x##selection.selectedIndexes(); \

@@ -108,10 +108,10 @@ public:
     }
 
     void setList(const QList<QSharedPointer<T> > &newList) {
+        beginRemoveRows(QModelIndex(), 0, p_list.count());
         child_map.clear();
         p_list.clear();
-
-        int count = newList.count();
+        endRemoveRows();
         for (int i = 0; i < newList.count(); i++) {
             child_map[newList[i]->getLibname()].append(newList[i]);
         }
@@ -119,11 +119,13 @@ public:
         // sort the library names
         QStringList parent_list = child_map.keys();
         qSort(parent_list);
+        beginInsertRows(QModelIndex(), 0, parent_list.count());
         for (int i = 0; i < parent_list.count(); i++) {
             tree_data d = {i, parent_list[i] };
             p_list.append(d);
         }
-        emit dataChanged(createIndex(0, 0), createIndex(count, 0));
+        endInsertRows();
+        emit dataChanged(createIndex(0, 0), createIndex(parent_list.count(), 0));
     }
 
     void setItem(QSharedPointer<T> newItem, QModelIndex oldIndex) {

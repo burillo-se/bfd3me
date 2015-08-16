@@ -27,6 +27,7 @@
 #include <QMessageBox>
 
 #include "utils/util.h"
+#include "utils/boilerplate.h"
 
 /*
  * Source file with main window functions (load/save/restore/delete)
@@ -91,16 +92,16 @@ BFD3ME::BFD3ME(QWidget *parent) :
 
 #define LOAD(x, y) \
     if (_mode == Util::Database) {\
-        ##x##model.setList(##y##_db.load(ui->pathEdit->text())); \
+        CONCAT(x, model).setList(CONCAT(y, _db).load(ui->pathEdit->text())); \
     } else {\
-        ##x##model.setList(##y##_f.load(ui->pathEdit->text())); \
+        CONCAT(x, model).setList(CONCAT(y, _f).load(ui->pathEdit->text())); \
     } \
-    ##x##fmodel.setSourceModel(&##x##model); \
-    ##x##selection.setModel(&##x##fmodel); \
-    ui->itemlist->setModel(&##x##fmodel); \
-    ui->itemlist->setSelectionModel(&##x##selection); \
-    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
-    ##x##fmodel.invalidate();
+    CONCAT(x, fmodel).setSourceModel(&CONCAT(x, model)); \
+    CONCAT(x, selection).setModel(&CONCAT(x, fmodel)); \
+    ui->itemlist->setModel(&CONCAT(x, fmodel)); \
+    ui->itemlist->setSelectionModel(&CONCAT(x, selection)); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    CONCAT(x, fmodel).invalidate();
 
 void BFD3ME::load() {
     if (ui->pathEdit->text().isEmpty()) {
@@ -126,23 +127,23 @@ void BFD3ME::load() {
 
 #define RESTORE_DB(x,y) \
     do { \
-    ##x##model.setList(##y##_db.restoreFromBackup()); \
-    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
-    ##x##fmodel.invalidate(); \
-    ##x##selection.clearSelection(); \
+    CONCAT(x, model).setList(CONCAT(y, _db).restoreFromBackup()); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    CONCAT(x, fmodel).invalidate(); \
+    CONCAT(x, selection).clearSelection(); \
     } while (0);
 
 #define RESTORE_F(x,y,z) \
-    idxs = ##x##selection.selectedIndexes(); \
+    idxs = CONCAT(x, selection).selectedIndexes(); \
     for (int i = idxs.count() - 1; i >= 0; i--) { \
         progressChanged("Restoring", idxs.count() - i, idxs.count()); \
-        QModelIndex idx = ##x##fmodel.mapToSource(idxs[i]); \
-        QSharedPointer<z> (x) = ##x##model.getItem(idx); \
-        ##x##model.setItem(##y##_f.restoreFromBackup((x)), idx); \
+        QModelIndex idx = CONCAT(x, fmodel).mapToSource(idxs[i]); \
+        QSharedPointer<z> (x) = CONCAT(x, model).getItem(idx); \
+        CONCAT(x, model).setItem(CONCAT(y, _f).restoreFromBackup((x)), idx); \
     } \
-    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
-    ##x##fmodel.invalidate(); \
-    ##x##selection.clearSelection();
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    CONCAT(x, fmodel).invalidate(); \
+    CONCAT(x, selection).clearSelection();
 
 void BFD3ME::restore()
 {
@@ -191,16 +192,16 @@ void BFD3ME::restore()
 
 // we need to go from the end, otherwise it'll end in disaster
 #define DELETE(x, y, z) \
-    idxs = ##x##selection.selectedIndexes(); \
+    idxs = CONCAT(x, selection).selectedIndexes(); \
     for (int s_idx = idxs.count() - 1; s_idx >= 0; s_idx--) { \
-        QModelIndex idx = ##x##fmodel.mapToSource(idxs[s_idx]); \
-        QSharedPointer<z> (x) = ##x##model.getItem(idx); \
-        ##x##model.removeItem(idx); \
-        ##y##_db.remove((x)); \
+        QModelIndex idx = CONCAT(x, fmodel).mapToSource(idxs[s_idx]); \
+        QSharedPointer<z> (x) = CONCAT(x, model).getItem(idx); \
+        CONCAT(x, model).removeItem(idx); \
+        CONCAT(y, _db).remove((x)); \
     } \
-    ##x##fmodel.invalidate(); \
-    connect(&##x##selection, SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
-    ##x##selection.clearSelection();
+    CONCAT(x, fmodel).invalidate(); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    CONCAT(x, selection).clearSelection();
 
 void BFD3ME::on_deleteBtn_clicked()
 {
@@ -228,8 +229,8 @@ void BFD3ME::on_deleteBtn_clicked()
 }
 
 #define SAVE_PROPERTY(x, y, z) \
-    if (ui->##y##Check->isChecked()) \
-        (x)->set##z##(ui->##y##Edit->text());
+    if (ui->CONCAT(y, Check)->isChecked()) \
+        (x)->CONCAT(set, z)(ui->CONCAT(y, Edit)->text());
 
 void BFD3ME::save()
 {

@@ -29,21 +29,22 @@
 #include <QDir>
 
 #include "utils/util.h"
+#include "utils/boilerplate.h"
 
 /*
  * Source file with various boring boilerplate code
  */
 
 #define HIDE(x) do {\
-    ui->##x##Edit->hide();\
-    ui->##x##Check->hide();\
-    ui->##x##Lbl->hide();\
+    ui->CONCAT(x, Edit)->hide();\
+    ui->CONCAT(x, Check)->hide();\
+    ui->CONCAT(x, Lbl)->hide();\
     } while (0)
 
 #define SHOW(x) do {\
-    ui->##x##Edit->show();\
-    ui->##x##Check->show();\
-    ui->##x##Lbl->show();\
+    ui->CONCAT(x, Edit)->show();\
+    ui->CONCAT(x, Check)->show();\
+    ui->CONCAT(x, Lbl)->show();\
     } while (0)
 
 BFD3ME::~BFD3ME()
@@ -158,13 +159,13 @@ void BFD3ME::on_pathEdit_textChanged(const QString &)
 
 
 #define SELECTION_START(x) \
-    list = ##x##selection.selectedIndexes(); \
+    list = CONCAT(x, selection).selectedIndexes(); \
     if (list.empty()) { \
         clearAll(); \
         return; \
     }
 #define SELECTION_BOILERPLATE(classname, x) \
-    QSharedPointer<classname> (x) = ##x##model.getItem(##x##fmodel.mapToSource(i)); \
+    QSharedPointer<classname> (x) = CONCAT(x, model).getItem(CONCAT(x, fmodel).mapToSource(i)); \
     setText((x)->getName(), ui->nameEdit, first); \
     setText((x)->getLibname(), ui->libnameEdit, first); \
     setText((x)->getLibcode(), ui->libcodeEdit, first);
@@ -234,8 +235,8 @@ void BFD3ME::on_browseBtn_clicked()
 
 #define FILTER_BOILERPLATE(x) \
     do { \
-    ##x##fmodel.setFilterType(filter_type); \
-    ##x##fmodel.invalidate(); \
+    CONCAT(x, fmodel).setFilterType(filter_type); \
+    CONCAT(x, fmodel).invalidate(); \
     } while (0);
 
 void BFD3ME::on_comboBox_currentIndexChanged(int index)
@@ -257,8 +258,8 @@ void BFD3ME::on_comboBox_currentIndexChanged(int index)
 
 #define TEXT_BOILERPLATE(x) \
     do { \
-    ##x##fmodel.setFilterFixedString(arg1); \
-    ##x##fmodel.invalidate(); \
+    CONCAT(x, fmodel).setFilterFixedString(arg1); \
+    CONCAT(x, fmodel).invalidate(); \
     } while (0);
 
 void BFD3ME::on_lineEdit_textChanged(const QString &arg1)

@@ -36,11 +36,11 @@ void BFD3ME::setDefaultDatabasePath() {
     QString path;
     switch (_type) {
     case Util::Kitpiece:
-        qDebug() << QStandardPaths::locate(QStandardPaths::AppDataLocation, "", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locate(QStandardPaths::AppDataLocation, "..", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
+        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "", QStandardPaths::LocateDirectory);
+        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "..", QStandardPaths::LocateDirectory);
+        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion", QStandardPaths::LocateDirectory);
+        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion/BFD3", QStandardPaths::LocateDirectory);
+        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
         path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
         if (path == "")
             return;

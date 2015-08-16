@@ -27,6 +27,8 @@
  * Boring, nothing to see here.
  */
 
+#include <QtDebug>
+
 static const QString _attr_name = "info_name";
 static const QString _attr_libcode = "info_library";
 static const QString _attr_libname = "info_librarylong";
@@ -55,9 +57,11 @@ QString Preset::getFilteredString() const {
     case Util::Libname:
         return _libname;
     default:
+        qDebug() << "huy";
         return QString();
     }
     // can't happen
+    qDebug() << "pezda";
     return QString();
 }
 

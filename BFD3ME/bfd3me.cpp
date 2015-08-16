@@ -100,7 +100,7 @@ BFD3ME::BFD3ME(QWidget *parent) :
     CONCAT(x, selection).setModel(&CONCAT(x, fmodel)); \
     ui->itemlist->setModel(&CONCAT(x, fmodel)); \
     ui->itemlist->setSelectionModel(&CONCAT(x, selection)); \
-    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
     CONCAT(x, fmodel).invalidate();
 
 void BFD3ME::load() {
@@ -128,7 +128,7 @@ void BFD3ME::load() {
 #define RESTORE_DB(x,y) \
     do { \
     CONCAT(x, model).setList(CONCAT(y, _db).restoreFromBackup()); \
-    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
     CONCAT(x, fmodel).invalidate(); \
     CONCAT(x, selection).clearSelection(); \
     } while (0);
@@ -141,7 +141,7 @@ void BFD3ME::load() {
         QSharedPointer<z> (x) = CONCAT(x, model).getItem(idx); \
         CONCAT(x, model).setItem(CONCAT(y, _f).restoreFromBackup((x)), idx); \
     } \
-    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
     CONCAT(x, fmodel).invalidate(); \
     CONCAT(x, selection).clearSelection();
 
@@ -200,7 +200,7 @@ void BFD3ME::restore()
         CONCAT(y, _db).remove((x)); \
     } \
     CONCAT(x, fmodel).invalidate(); \
-    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(on_selection_changed())); \
+    connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
     CONCAT(x, selection).clearSelection();
 
 void BFD3ME::on_deleteBtn_clicked()

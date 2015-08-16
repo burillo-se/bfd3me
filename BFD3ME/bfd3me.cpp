@@ -30,6 +30,8 @@
 
 /*
  * Source file with main window functions (load/save/restore/delete)
+ *
+ * All load/save/restore functions run in separate threads
  */
 
 BFD3ME::BFD3ME(QWidget *parent) :
@@ -87,9 +89,6 @@ BFD3ME::BFD3ME(QWidget *parent) :
 }
 
 
-/*
- * This runs in a separate thread
- */
 #define LOAD(x, y) \
     if (_mode == Util::Database) {\
         ##x##model.setList(##y##_db.load(ui->pathEdit->text())); \

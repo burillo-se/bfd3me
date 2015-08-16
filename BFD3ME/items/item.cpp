@@ -41,4 +41,4 @@ void Item::setSaveToElement(bool val) {
         _node = QDomElement();
 }
 
-void Item::~Item() {}
+Item::~Item() {}

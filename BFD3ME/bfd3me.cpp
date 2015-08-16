@@ -43,7 +43,8 @@ BFD3ME::BFD3ME(QWidget *parent) :
     preset_f(PRESET_TAG, PRESET_FILTER),
     kit_db(KIT_TAG),
     kitpiece_db(KITPIECE_TAG),
-    preset_db(PRESET_TAG)
+    preset_db(PRESET_TAG),
+    settings(QSettings::UserScope, "BFD3ME", "BFD3 Metadata Editor", this)
 {
     ui->setupUi(this);
     setMode(Util::Files);
@@ -92,19 +93,21 @@ BFD3ME::BFD3ME(QWidget *parent) :
 
 #define LOAD(x, y) \
     if (_mode == Util::Database) {\
-        CONCAT(x, model).setList(CONCAT(y, _db).load(ui->pathEdit->text())); \
+        CONCAT(x, model).setList(CONCAT(y, _db).load(ui->pathEdit->currentText())); \
     } else {\
-        CONCAT(x, model).setList(CONCAT(y, _f).load(ui->pathEdit->text())); \
+        CONCAT(x, model).setList(CONCAT(y, _f).load(ui->pathEdit->currentText())); \
     } \
     CONCAT(x, fmodel).setSourceModel(&CONCAT(x, model)); \
     CONCAT(x, selection).setModel(&CONCAT(x, fmodel)); \
     ui->itemlist->setModel(&CONCAT(x, fmodel)); \
     ui->itemlist->setSelectionModel(&CONCAT(x, selection)); \
     connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
-    CONCAT(x, fmodel).invalidate();
+    CONCAT(x, fmodel).invalidate(); \
+    if (CONCAT(x, model).rowCount() != 0) \
+        setNewPastPath();
 
 void BFD3ME::load() {
-    if (ui->pathEdit->text().isEmpty()) {
+    if (ui->pathEdit->currentText().isEmpty()) {
         loadThread.quit();
         return;
     }

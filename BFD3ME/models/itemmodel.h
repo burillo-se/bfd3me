@@ -49,7 +49,7 @@ private:
     QMap<QString,QList<QSharedPointer<T> > > child_map;
     QMutex mutex;
 public:
-    int rowCount(const QModelIndex &index) const {
+    int rowCount(const QModelIndex &index = QModelIndex()) const {
         if (index == QModelIndex())
             return p_list.count();
         if (index.internalPointer() != 0)

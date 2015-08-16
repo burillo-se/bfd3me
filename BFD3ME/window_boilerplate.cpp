@@ -136,7 +136,7 @@ void BFD3ME::on_type_preset_toggled(bool checked)
 }
 
 void BFD3ME::setEnabledButtons() {
-    if (ui->pathEdit->text() != "") {
+    if (ui->pathEdit->currentText() != "") {
         ui->loadBtn->setEnabled(true);
         ui->saveBtn->setEnabled(true);
         ui->restoreBtn->setEnabled(true);
@@ -152,7 +152,7 @@ void BFD3ME::setEnabledButtons() {
     }
 }
 
-void BFD3ME::on_pathEdit_textChanged(const QString &)
+void BFD3ME::on_pathEdit_currentTextChanged(const QString &)
 {
     setEnabledButtons();
 }
@@ -211,6 +211,8 @@ void BFD3ME::on_browseBtn_clicked()
     QFileDialog dialog;
     if (_mode == Util::Database) {
         dialog.setFileMode(QFileDialog::ExistingFile);
+        if (ui->pathEdit->currentText() != "")
+            dialog.setDirectory(QFileInfo(ui->pathEdit->currentText()).absoluteDir().absolutePath());
         switch (_type) {
         case Util::Kit:
             dialog.setNameFilter(KIT_DB_FILENAME);
@@ -223,13 +225,19 @@ void BFD3ME::on_browseBtn_clicked()
             break;
         }
     } else {
+        if (ui->pathEdit->currentText() != "")
+            dialog.setDirectory(ui->pathEdit->currentText());
         dialog.setFileMode(QFileDialog::Directory);
         dialog.setOption(QFileDialog::ShowDirsOnly);
     }
     dialog.setReadOnly(true);
     dialog.exec();
     if (dialog.result() == QDialog::Accepted) {
-        ui->pathEdit->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
+        QStringList items;
+        items << QDir::toNativeSeparators(dialog.selectedFiles().at(0));
+        items.append(getPastPaths());
+        ui->pathEdit->clear();
+        ui->pathEdit->addItems(items);
     }
 }
 

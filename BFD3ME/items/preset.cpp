@@ -57,11 +57,9 @@ QString Preset::getFilteredString() const {
     case Util::Libname:
         return _libname;
     default:
-        qDebug() << "huy";
         return QString();
     }
     // can't happen
-    qDebug() << "pezda";
     return QString();
 }
 

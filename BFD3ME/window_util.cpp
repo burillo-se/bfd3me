@@ -31,6 +31,30 @@
  * Source file with various utility functions for window class
  */
 
+static QString getKey(Util::Mode mode, Util::Type type) {
+    QString key;
+    switch (type) {
+    case Util::Kit:
+        key += "kit";
+        break;
+    case Util::Kitpiece:
+        key += "kitpiece";
+        break;
+    case Util::Preset:
+        key += "preset";
+        break;
+    }
+    switch (mode) {
+    case Util::Database:
+        key += "db";
+        break;
+    case Util::Files:
+        key += "f";
+        break;
+    }
+    return key;
+}
+
 static QString getDBPath(QString fname) {
     // first, try regular path
     QString result = QStandardPaths::locate(QStandardPaths::AppDataLocation, QString("../fxpansion/BFD3/%0").arg(fname));
@@ -41,32 +65,72 @@ static QString getDBPath(QString fname) {
     return QStandardPaths::locate(QStandardPaths::HomeLocation, QString("Library/Application Support/fxpansion/BFD3/%0").arg(fname));
 }
 
-void BFD3ME::setDefaultDatabasePath() {
-    QFileInfo fi;
-    QString path;
-    switch (_type) {
-    case Util::Kitpiece:
-        path = getDBPath(KITPIECE_DB_FILENAME);
-        if (path == "")
-            return;
-        fi = QFileInfo(path);
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
-    case Util::Kit:
-        path = getDBPath(KIT_DB_FILENAME);
-        if (path == "")
-            return;
-        fi = QFileInfo(path);
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
-    case Util::Preset:
-        path = getDBPath(PRESET_DB_FILENAME);
-        if (path == "")
-            return;
-        fi = QFileInfo(path);
-        ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
-        break;
+QStringList BFD3ME::getPastPaths() {
+    QStringList paths;
+    QString key = getKey(_mode, _type);
+
+    int size = settings.beginReadArray(key);
+    for (int i = 0; i < size; i++) {
+        settings.setArrayIndex(i);
+        QString path = settings.value("path").toString();
+        paths << path;
     }
+    settings.endArray();
+    return paths;
+}
+
+
+void BFD3ME::setNewPastPath() {
+    QString curPath = ui->pathEdit->currentText();
+    QStringList paths;
+    QString key = getKey(_mode, _type);
+
+    paths << curPath;
+    QStringList prevPaths = getPastPaths();
+
+    // don't save duplicates
+    for (int i = 0; i < prevPaths.count(); i++) {
+        if (prevPaths.at(i) != curPath)
+            paths << prevPaths.at(i);
+    }
+
+    while (paths.size() > 10) {
+        paths.removeLast();
+    }
+
+    settings.beginWriteArray(key, paths.size());
+    for (int i = 0; i < paths.size(); i++) {
+        settings.setArrayIndex(i);
+        settings.setValue("path", paths.at(i));
+    }
+    settings.endArray();
+}
+
+void BFD3ME::setPathEditItems() {
+    QStringList paths;
+
+    if (_mode == Util::Database) {
+        QString autoPath;
+        switch(_type) {
+        case Util::Kit:
+            autoPath = getDBPath(KIT_DB_FILENAME);
+            break;
+        case Util::Kitpiece:
+            autoPath = getDBPath(KITPIECE_DB_FILENAME);
+            break;
+        case Util::Preset:
+            autoPath = getDBPath(PRESET_DB_FILENAME);
+            break;
+        }
+        if (autoPath != "") {
+            QFileInfo fi(autoPath);
+            paths << QDir::toNativeSeparators(fi.absoluteFilePath());
+        }
+    }
+    paths.append(getPastPaths());
+    ui->pathEdit->clear();
+    ui->pathEdit->addItems(paths);
+    ui->pathEdit->setCurrentIndex(0);
 }
 
 void BFD3ME::clearData() {
@@ -94,12 +158,9 @@ void BFD3ME::clearData() {
 void BFD3ME::setMode(Util::Mode mode) {
     _mode = mode;
 
-    ui->pathEdit->clear();
     clearAll();
     clearData();
-    if (_mode == Util::Database) {
-        setDefaultDatabasePath();
-    }
+    setPathEditItems();
     setEnabledButtons();
 }
 
@@ -108,10 +169,8 @@ void BFD3ME::setType(Util::Type type) {
 
     clearAll();
     clearData();
+    setPathEditItems();
     displayEdits();
-    if (_mode == Util::Database) {
-        setDefaultDatabasePath();
-    }
     setFilterStrings();
     setEnabledButtons();
 }

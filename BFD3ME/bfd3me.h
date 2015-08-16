@@ -27,6 +27,7 @@
 #include <QLineEdit>
 #include <QThread>
 #include <QObject>
+#include <QSettings>
 
 #include "utils/util.h"
 #include "items/kit.h"
@@ -69,14 +70,16 @@ private slots:
     void error(QString path, QString errorStr);
     void finished();
 
-    void on_pathEdit_textChanged(const QString &arg1);
+    void on_pathEdit_currentTextChanged(const QString &arg1);
 
     void on_lineEdit_textChanged(const QString &arg1);
 
 private:
     void setMode(Util::Mode mode);
     void setType(Util::Type type);
-    void setDefaultDatabasePath();
+    void setPathEditItems();
+    QStringList getPastPaths();
+    void setNewPastPath();
     void clearAll();
     void clearData();
     void displayEdits();
@@ -110,6 +113,7 @@ private:
     QThread saveThread;
     QThread restoreThread;
     QStringList errors;
+    QSettings settings;
 };
 
 #endif // BFD3ME_H

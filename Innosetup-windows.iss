@@ -6,6 +6,8 @@
 #define MyAppPublisher "Anatoly Burakov"
 #define MyAppURL "http://www.github.com/burillo-se/bfd3me/"
 #define MyAppExeName "BFD3ME.exe"
+#define ProfilePath "S:\Audio\Profile"
+#define ScratchPath "E:\BFD3ME"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -25,7 +27,7 @@ OutputBaseFilename=bfd3me-setup
 Compression=lzma
 SolidCompression=yes
 LicenseFile=userdocs:GitHub\bfd3me\LICENSE
-OutputDir=D:\BFD3ME\setup
+OutputDir={#ScratchPath}\setup
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -34,20 +36,20 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Burillo\Documents\GitHub\bfd3me\build-BFD3ME-Desktop_Qt_5_5_0_MSVC2010_32bit-Release\release\BFD3ME.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Burillo\Documents\GitHub\bfd3me\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\vc_red.cab"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
-Source: "D:\BFD3ME\vc_red.msi"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
-Source: "D:\BFD3ME\platforms\qwindows.dll"; DestDir: "{app}\platforms\"; Flags: ignoreversion
-Source: "D:\BFD3ME\icudt54.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\icuin54.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\icuuc54.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\BFD3ME\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ProfilePath}\Documents\GitHub\bfd3me\build-BFD3ME-Desktop_Qt_5_5_0_MSVC2010_32bit-Release\release\BFD3ME.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ProfilePath}\Documents\GitHub\bfd3me\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\vc_red.cab"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
+Source: "{#ScratchPath}\vc_red.msi"; DestDir: "{tmp}"; Flags: ignoreversion deleteafterinstall;
+Source: "{#ScratchPath}\platforms\qwindows.dll"; DestDir: "{app}\platforms\"; Flags: ignoreversion
+Source: "{#ScratchPath}\icudt54.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\icuin54.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\icuuc54.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\Qt5Core.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\Qt5Widgets.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\Qt5Xml.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ScratchPath}\Qt5Gui.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "C:\Users\Burillo\Documents\GitHub\bfd3me\build-BFD3ME-Desktop_Qt_5_5_0_MSVC2010_32bit-Release\release\BFD3ME.exe.embed.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ProfilePath}\Documents\GitHub\bfd3me\build-BFD3ME-Desktop_Qt_5_5_0_MSVC2010_32bit-Release\release\BFD3ME.exe.embed.manifest"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

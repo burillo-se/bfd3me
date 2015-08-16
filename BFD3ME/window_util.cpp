@@ -36,6 +36,7 @@ void BFD3ME::setDefaultDatabasePath() {
     QString path;
     switch (_type) {
     case Util::Kitpiece:
+        qDebug() << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
         qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "", QStandardPaths::LocateDirectory);
         qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "..", QStandardPaths::LocateDirectory);
         qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion", QStandardPaths::LocateDirectory);

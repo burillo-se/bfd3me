@@ -31,32 +31,36 @@
  * Source file with various utility functions for window class
  */
 
+static QString getDBPath(QString fname) {
+    // first, try regular path
+    QString result = QStandardPaths::locate(QStandardPaths::AppDataLocation, QString("../fxpansion/BFD3/%0").arg(fname));
+    if (result != "")
+        return result;
+
+    // on OSX (at least in my virtual machine), that code didn't seem to work, so let's try alternate method
+    return QStandardPaths::locate(QStandardPaths::HomeLocation, QString("Library/Application Support/fxpansion/BFD3/%0").arg(fname));
+}
+
 void BFD3ME::setDefaultDatabasePath() {
     QFileInfo fi;
     QString path;
     switch (_type) {
     case Util::Kitpiece:
-        qDebug() << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
-        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "..", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion/BFD3", QStandardPaths::LocateDirectory);
-        qDebug() << QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
-        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
+        path = getDBPath(KITPIECE_DB_FILENAME);
         if (path == "")
             return;
         fi = QFileInfo(path);
         ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
         break;
     case Util::Kit:
-        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KIT_DB_FILENAME);
+        path = getDBPath(KIT_DB_FILENAME);
         if (path == "")
             return;
         fi = QFileInfo(path);
         ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
         break;
     case Util::Preset:
-        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" PRESET_DB_FILENAME);
+        path = getDBPath(PRESET_DB_FILENAME);
         if (path == "")
             return;
         fi = QFileInfo(path);

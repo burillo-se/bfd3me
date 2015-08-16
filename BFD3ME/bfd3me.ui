@@ -461,15 +461,24 @@
    <property name="text">
     <string>About...</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
     <string>About Qt...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
  </widget>

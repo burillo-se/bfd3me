@@ -36,7 +36,7 @@
 #define KITPIECE_FILTER "*Info.xml"
 #define PRESET_FILTER "*.bfd3"
 #define KIT_DB_FILENAME "Kit.database"
-#define KITPIECE_DB_FILENAME "Kitpiece.database"
+#define KITPIECE_DB_FILENAME "KitPiece.database"
 #define PRESET_DB_FILENAME "Programs.database"
 
 class Util

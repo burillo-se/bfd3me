@@ -33,17 +33,27 @@
 
 void BFD3ME::setDefaultDatabasePath() {
     QFileInfo fi;
+    QString path;
     switch (_type) {
     case Util::Kitpiece:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" KITPIECE_DB_FILENAME));
+        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KITPIECE_DB_FILENAME);
+        if (path == "")
+            return;
+        fi = QFileInfo(path);
         ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
         break;
     case Util::Kit:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" KIT_DB_FILENAME));
+        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" KIT_DB_FILENAME);
+        if (path == "")
+            return;
+        fi = QFileInfo(path);
         ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
         break;
     case Util::Preset:
-        fi = QFileInfo(QStandardPaths::locate(QStandardPaths::AppDataLocation, "../FXpansion/BFD3/" PRESET_DB_FILENAME));
+        path = QStandardPaths::locate(QStandardPaths::AppDataLocation, "../fxpansion/BFD3/" PRESET_DB_FILENAME);
+        if (path == "")
+            return;
+        fi = QFileInfo(path);
         ui->pathEdit->setText(QDir::toNativeSeparators(fi.absoluteFilePath()));
         break;
     }

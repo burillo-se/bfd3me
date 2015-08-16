@@ -46,7 +46,7 @@ private:
     };
 
     QList<tree_data> p_list;
-    QMap<QString,QList<QSharedPointer<T>>> child_map;
+    QMap<QString,QList<QSharedPointer<T> > > child_map;
     QMutex mutex;
 public:
     int rowCount(const QModelIndex &index) const {
@@ -100,14 +100,14 @@ public:
 
     QSharedPointer<T> getItem(QModelIndex index) {
         tree_data *ptr = (tree_data*) index.internalPointer();
-        QList<QSharedPointer<T>> &list = child_map[ptr->str];
+        QList<QSharedPointer<T> > &list = child_map[ptr->str];
         int idx = index.row();
         if (list.empty() || idx >= list.count())
             return QSharedPointer<T>();
         return list[idx];
     }
 
-    void setList(QList<QSharedPointer<T>> &newList) {
+    void setList(QList<QSharedPointer<T> > &newList) {
         child_map.clear();
         p_list.clear();
 
@@ -128,7 +128,7 @@ public:
 
     void setItem(QSharedPointer<T> newItem, QModelIndex oldIndex) {
         tree_data *ptr = (tree_data*) oldIndex.internalPointer();
-        QList<QSharedPointer<T>> &oldList = child_map[ptr->str];
+        QList<QSharedPointer<T> > &oldList = child_map[ptr->str];
 
         QString oldname = ptr->str;
         QString newname = newItem->getLibname();
@@ -155,7 +155,7 @@ public:
             newIndex = index(new_ptr->row_id, 0, QModelIndex());
 
             // remove item from old list
-            QList<QSharedPointer<T>> &newList = child_map[newname];
+            QList<QSharedPointer<T> > &newList = child_map[newname];
             beginRemoveRows(oldIndex, oldIndex.row(), oldIndex.row());
             oldList.removeAt(oldIndex.row());
             endRemoveRows();
@@ -175,7 +175,7 @@ public:
 
     void removeItem(QModelIndex parent) {
         tree_data *ptr = (tree_data*) parent.internalPointer();
-        QList<QSharedPointer<T>> &list = child_map[ptr->str];
+        QList<QSharedPointer<T> > &list = child_map[ptr->str];
         int idx = parent.row();
         beginRemoveRows(parent, idx, idx);
         list.removeAt(idx);

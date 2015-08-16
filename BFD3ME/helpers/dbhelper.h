@@ -56,9 +56,9 @@ private:
     QMap<QSharedPointer<T>,QDomElement> _info_map;
 public:
     DBHelper(const QString &tag);
-    QList<QSharedPointer<T>> load(const QString &path);
+    QList<QSharedPointer<T> > load(const QString &path);
     void save();
-    QList<QSharedPointer<T>> restoreFromBackup();
+    QList<QSharedPointer<T> > restoreFromBackup();
     void remove(QSharedPointer<T> item);
     void clear();
 };
@@ -79,8 +79,8 @@ void DBHelper<T>::clear()
  * Load a list of items given a path to the database file
  */
 template <typename T>
-QList<QSharedPointer<T>> DBHelper<T>::load(const QString &path) {
-    QList<QSharedPointer<T>> result;
+QList<QSharedPointer<T> > DBHelper<T>::load(const QString &path) {
+    QList<QSharedPointer<T> > result;
 
     clear();
 
@@ -119,7 +119,7 @@ void DBHelper<T>::save() {
  * Restore older backup and reload the item list from that backup.
  */
 template <typename T>
-QList<QSharedPointer<T>> DBHelper<T>::restoreFromBackup() {
+QList<QSharedPointer<T> > DBHelper<T>::restoreFromBackup() {
     restoreFile(_path);
 
     return load(_path);

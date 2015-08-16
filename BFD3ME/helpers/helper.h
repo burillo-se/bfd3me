@@ -158,7 +158,7 @@ QSharedPointer<T> Helper<T>::restoreFromBackup(QSharedPointer<T> k) {
  */
 template <typename T>
 QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
-    QList<QSharedPointer<T>> result;
+    QList<QSharedPointer<T> > result;
     QStringList filter;
     filter << _filter;
 

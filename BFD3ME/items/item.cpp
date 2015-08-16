@@ -40,3 +40,5 @@ void Item::setSaveToElement(bool val) {
     if (!_saveToElement)
         _node = QDomElement();
 }
+
+void Item::~Item() {}

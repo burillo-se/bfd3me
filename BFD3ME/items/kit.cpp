@@ -52,6 +52,8 @@ QString Kit::getFilteredString() const {
         return _libcode;
     case Util::Libname:
         return _libname;
+    default:
+        return QString();
     }
     // can't happen
     return QString();

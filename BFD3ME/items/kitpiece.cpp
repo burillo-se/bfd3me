@@ -129,6 +129,8 @@ QString Kitpiece::getFilteredString() const {
         return _class;
     case Util::Subclass:
         return _subclass;
+    default:
+        return QString();
     }
     // can't happen
     return QString();

@@ -107,7 +107,7 @@ public:
         return list[idx];
     }
 
-    void setList(QList<QSharedPointer<T> > &newList) {
+    void setList(const QList<QSharedPointer<T> > &newList) {
         child_map.clear();
         p_list.clear();
 

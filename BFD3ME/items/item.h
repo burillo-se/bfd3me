@@ -51,6 +51,7 @@ public:
     void setSaveToElement(bool val);
     virtual QString getFilteredString() const = 0;
     virtual void save(QDomElement &node) const = 0;
+    virtual ~Item() = 0;
 };
 
 #endif // ITEM_H

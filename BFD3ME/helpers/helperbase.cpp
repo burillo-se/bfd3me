@@ -41,11 +41,12 @@ QDomDocument HelperBase::loadDoc(const QString &path) {
     int line, col;
 
     QTextStream in(&f);
-    if (!doc.setContent(in.readAll(), false, &errorStr, &line, &col)) {
-        emit error(QDir::toNativeSeparators(path), QString("Line %0 column %1: %2").arg(line).arg(col).arg(errorStr));
-    }
+    QString text = in.readAll();
     f.close();
-
+    if (!doc.setContent(text, false, &errorStr, &line, &col)) {
+        emit error(QDir::toNativeSeparators(path), QString("Line %0 column %1: %2").arg(line).arg(col).arg(errorStr));
+        return QDomDocument();
+    }
     return doc;
 }
 

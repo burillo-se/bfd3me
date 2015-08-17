@@ -52,12 +52,21 @@ BFD3ME::~BFD3ME()
     delete ui;
 }
 
+#define STR(str) #str
+#define STRING(str) STR(str)
+#define TAG_STR STRING(VERSION_STR)
+
 void BFD3ME::on_actionAbout_triggered() {
+    QString version_str = QString("%0.%1.%2").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(PATCH_VERSION);
+    if (QString(TAG_STR).length())
+        version_str += "-" TAG_STR;
     QMessageBox::about(this, "About BFD3 Metadata Editor",
+                       QString("BFD3 Metadata Editor v%0\n\n"
                        "Copyright (C) Anatoly Burakov, 2015\n\n"
                        "BFD and FXpansion are trademarks of FXpansion Audio UK Ltd.\n\n"
                        "Usage of this program is not endorsed or supported by FXpansion in any way.\n\n"
-                       "This program is Free Software licensed under GPLv3 or later.");
+                       "This program is Free Software licensed under GPLv3 or later.")
+                       .arg(version_str));
 }
 
 void BFD3ME::on_actionAbout_Qt_triggered() {

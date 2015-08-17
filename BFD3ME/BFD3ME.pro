@@ -11,6 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BFD3ME
 TEMPLATE = app
 
+DEFINES += MAJOR_VERSION=1 \
+           MINOR_VERSION=0 \
+           PATCH_VERSION=0 \
+           VERSION_STR="rc1"
+
 
 SOURCES += main.cpp\
         bfd3me.cpp \

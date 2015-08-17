@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BFD3 Metadata Editor"
-#define MyAppVersion "1.0pre1"
+#define MyAppVersion "1.0.0-rc1"
 #define MyAppPublisher "Anatoly Burakov"
 #define MyAppURL "http://www.github.com/burillo-se/bfd3me/"
 #define MyAppExeName "BFD3ME.exe"

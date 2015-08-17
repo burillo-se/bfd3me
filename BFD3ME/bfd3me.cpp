@@ -202,6 +202,7 @@ void BFD3ME::restore()
         CONCAT(x, model).removeItem(idx); \
         CONCAT(y, _db).remove((x)); \
     } \
+	CONCAT(y, _db).save(); \
     CONCAT(x, fmodel).invalidate(); \
     connect(&CONCAT(x, selection), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selected())); \
     CONCAT(x, selection).clearSelection();

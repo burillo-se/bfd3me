@@ -114,6 +114,8 @@ QSharedPointer<T> Helper<T>::loadOne(const QString &path) {
         return QSharedPointer<T>();
     }
     QSharedPointer<T> new_k = alloc<T>(doc, _tag);
+	if (new_k.isNull())
+		return QSharedPointer<T>();
     new_k->setSaveToElement(false);
     _info_map.insert(new_k, path);
 
@@ -219,6 +221,7 @@ QList<QSharedPointer<T> > Helper<T>::load(const QString &path) {
 
         // if we found a strange XML document that we couldn't parse
         if (k.isNull()) {
+			emit error(QDir::toNativeSeparators(path), "Couldn't parse item from file");
             continue;
         }
         result.append(k);

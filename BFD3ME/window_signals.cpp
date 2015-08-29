@@ -23,6 +23,7 @@
 #include "ui_bfd3me.h"
 
 #include <QMessageBox>
+#include <QtDebug>
 
 #include "utils/util.h"
 
@@ -48,4 +49,21 @@ void BFD3ME::finished() {
         QMessageBox::warning(this, "Errors occured", errStr);
     }
     loadThread.quit();
+}
+
+void BFD3ME::loadBtn_animation(int value) {
+    int base_red = palette.text().color().red();
+    int base_green = palette.text().color().green();
+    int base_blue = palette.text().color().blue();
+    int cur_frame = value % 100;
+    if (cur_frame > 50) {
+        cur_frame = 100 - (cur_frame);
+    }
+    int red_range = 255 - base_red;
+    int cur_red = base_red + (int) ((cur_frame / 50.0) * red_range);
+    ui->loadBtn->setStyleSheet(QString("font-weight: bold; color: rgb(%0,%1,%2)").arg(cur_red).arg(base_green).arg(base_blue));
+}
+
+void BFD3ME::loadBtn_animation_finished() {
+    ui->loadBtn->setStyleSheet("");
 }

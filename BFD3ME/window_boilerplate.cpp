@@ -149,10 +149,14 @@ void BFD3ME::setEnabledButtons() {
         ui->loadBtn->setEnabled(true);
         ui->saveBtn->setEnabled(true);
         ui->restoreBtn->setEnabled(true);
-        if (_mode == Util::Database)
+        if (_mode == Util::Database) {
             ui->deleteBtn->setEnabled(true);
-        else
+            ui->loadBtn->setText("Load database");
+        }
+        else {
             ui->deleteBtn->setEnabled(false);
+            ui->loadBtn->setText("Search folder");
+        }
     } else {
         ui->loadBtn->setEnabled(false);
         ui->saveBtn->setEnabled(false);
@@ -247,6 +251,9 @@ void BFD3ME::on_browseBtn_clicked()
         items.append(getPastPaths());
         ui->pathEdit->clear();
         ui->pathEdit->addItems(items);
+
+        // blink the load button
+        timeline.start();
     }
 }
 

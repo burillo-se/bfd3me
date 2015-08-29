@@ -28,6 +28,7 @@
 #include <QThread>
 #include <QObject>
 #include <QSettings>
+#include <QTimeLine>
 
 #include "utils/util.h"
 #include "items/kit.h"
@@ -52,6 +53,8 @@ public:
     ~BFD3ME();
 
 private slots:
+    void loadBtn_animation(int frame);
+    void loadBtn_animation_finished();
     void on_mode_f_toggled(bool checked);
     void on_mode_db_toggled(bool checked);
     void on_type_kitpiece_toggled(bool checked);
@@ -114,6 +117,9 @@ private:
     QThread restoreThread;
     QStringList errors;
     QSettings settings;
+    QTimeLine timeline;
+    // cache default color scheme
+    QPalette palette;
 };
 
 #endif // BFD3ME_H

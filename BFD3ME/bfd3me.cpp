@@ -47,6 +47,9 @@ BFD3ME::BFD3ME(QWidget *parent) :
     settings(QSettings::UserScope, "BFD3ME", "BFD3 Metadata Editor", this)
 {
     ui->setupUi(this);
+    palette = QApplication::palette();
+    timeline.setDuration(2000);
+    timeline.setFrameRange(0, 300);
     setMode(Util::Files);
     setType(Util::Kitpiece);
 
@@ -88,6 +91,10 @@ BFD3ME::BFD3ME(QWidget *parent) :
     connect(&preset_db, SIGNAL(progressChanged(QString,int,int)), this, SLOT(progressChanged(QString,int,int)));
     connect(&preset_db, SIGNAL(error(QString,QString)), this, SLOT(error(QString,QString)));
     connect(&preset_db, SIGNAL(finished()), this, SLOT(finished()));
+
+    // set up animation
+    connect(&timeline, SIGNAL(frameChanged(int)), this, SLOT(loadBtn_animation(int)));
+    connect(&timeline, SIGNAL(finished()), this, SLOT(loadBtn_animation_finished()));
 }
 
 

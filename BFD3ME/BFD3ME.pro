@@ -14,7 +14,7 @@ TEMPLATE = app
 DEFINES += MAJOR_VERSION=1 \
            MINOR_VERSION=0 \
            PATCH_VERSION=0 \
-           VERSION_STR="rc1"
+           VERSION_STR="rc2"
 
 
 SOURCES += main.cpp\

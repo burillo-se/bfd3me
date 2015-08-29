@@ -133,6 +133,8 @@ void Helper<T>::save(QSharedPointer<T> k) {
 
     QDomDocument doc = loadDoc(path);
     QDomElement el = getElement(doc, _tag);
+    // update the path automatically
+    k->setPath(QDir::toNativeSeparators(path));
     k->save(el);
 
     saveDoc(doc, path);

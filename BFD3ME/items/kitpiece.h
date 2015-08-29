@@ -44,6 +44,7 @@ private:
     QString _beater;
     QString _class;
     QString _subclass;
+    QString _path;
 public:
     Kitpiece(QDomElement &node);
     void setName(const QString &val);
@@ -65,6 +66,8 @@ public:
     void setClass(const QString &val);
     QString getClass() const;
     void setSubclass(const QString &val);
+    QString getPath() const;
+    void setPath(const QString &val);
     QString getSubclass() const;
     QString getFilteredString() const;
     void save(QDomElement &node) const;

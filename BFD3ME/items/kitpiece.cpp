@@ -37,6 +37,7 @@ static const QString _attr_dimensions = "kpi_dimensions";
 static const QString _attr_beater = "kpi_beater";
 static const QString _attr_class = "kpi_class";
 static const QString _attr_subclass = "kpi_subclass";
+static const QString _attr_path = "info_path";
 
 /*
  * In a kitpiece, class node is a special case.
@@ -77,6 +78,7 @@ Kitpiece::Kitpiece(QDomElement &node) : Item(node)
     _date = node.attribute(_attr_date);
     _dimensions = node.attribute(_attr_dimensions);
     _beater = node.attribute(_attr_beater);
+    _path = node.attribute(_attr_path);
 
     /* class is a special case */
     QDomElement class_node = getClassNode(_node);
@@ -106,6 +108,7 @@ ITEM_PARAM(Kitpiece, Model, _model)
 ITEM_PARAM(Kitpiece, Date, _date)
 ITEM_PARAM(Kitpiece, Dimensions, _dimensions)
 ITEM_PARAM(Kitpiece, Beater, _beater)
+ITEM_PARAM(Kitpiece, Path, _path)
 
 QString Kitpiece::getFilteredString() const {
     switch (_ftype) {
@@ -146,6 +149,7 @@ void Kitpiece::save(QDomElement &node) const {
     SAVE_PARAM(_dimensions);
     SAVE_PARAM(_beater);
     SAVE_PARAM(_subclass);
+    SAVE_PARAM(_path);
 
     // class is a special case
     QDomElement class_node = getClassNode(node);

@@ -32,6 +32,7 @@
 static const QString _attr_name = "info_name";
 static const QString _attr_libcode = "info_library";
 static const QString _attr_libname = "info_librarylong";
+static const QString _attr_path = "info_path";
 
 /*
  * XML parsing is in the constructor. What happens if we
@@ -42,11 +43,13 @@ Preset::Preset(QDomElement &node) : Item(node)
     _name = node.attribute(_attr_name);
     _libname = node.attribute(_attr_libname);
     _libcode = node.attribute(_attr_libcode);
+    _path = node.attribute(_attr_path);
 }
 
 ITEM_PARAM(Preset, Name, _name)
 ITEM_PARAM(Preset, Libname, _libname)
 ITEM_PARAM(Preset, Libcode, _libcode)
+ITEM_PARAM(Preset, Path, _path)
 
 QString Preset::getFilteredString() const {
     switch (_ftype) {
@@ -67,4 +70,5 @@ void Preset::save(QDomElement &node) const {
     SAVE_PARAM(_name);
     SAVE_PARAM(_libname);
     SAVE_PARAM(_libcode);
+    SAVE_PARAM(_path);
 }

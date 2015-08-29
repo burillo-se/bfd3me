@@ -37,6 +37,7 @@ private:
     QString _name;
     QString _libname;
     QString _libcode;
+    QString _path;
 public:
     Preset(QDomElement &node);
     void setName(const QString &val);
@@ -45,6 +46,8 @@ public:
     QString getLibname() const;
     void setLibcode(const QString &val);
     QString getLibcode() const;
+    void setPath(const QString &val);
+    QString getPath() const;
     QString getFilteredString() const;
     void save(QDomElement &node) const;
 };

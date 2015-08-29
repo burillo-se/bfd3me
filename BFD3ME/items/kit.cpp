@@ -31,17 +31,20 @@
 static const QString _attr_name = "info_name";
 static const QString _attr_libcode = "info_library";
 static const QString _attr_libname = "info_librarylong";
+static const QString _attr_path = "info_path";
 
 Kit::Kit(QDomElement &node) : Item(node)
 {
     _name = node.attribute(_attr_name);
     _libname = node.attribute(_attr_libname);
     _libcode = node.attribute(_attr_libcode);
+    _path = node.attribute(_attr_path);
 }
 
 ITEM_PARAM(Kit, Name, _name)
 ITEM_PARAM(Kit, Libname, _libname)
 ITEM_PARAM(Kit, Libcode, _libcode)
+ITEM_PARAM(Kit, Path, _path)
 
 
 QString Kit::getFilteredString() const {
@@ -63,4 +66,5 @@ void Kit::save(QDomElement &node) const {
     SAVE_PARAM(_name);
     SAVE_PARAM(_libname);
     SAVE_PARAM(_libcode);
+    SAVE_PARAM(_path);
 }
